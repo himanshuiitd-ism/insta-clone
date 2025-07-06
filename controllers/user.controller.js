@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import getDataUri from "../utils/datauri.js";
 
 const generateAccessAndRefreshToken=async (userId)=>{
   try {
@@ -127,4 +128,39 @@ export const logout = asyncHandler(async(_ , res)=>{
   .json(
     new ApiResponse(200,{},"Logout Successfully")
   )
+})
+
+export const getProfile=asyncHandler(async(req,res)=>{
+try {
+    const userId=req.params._id
+    if(!userId){
+      throw new ApiError(400,"User is not valid")
+    }
+    const userProfile=await User.findById(userId).select("-password -refreshToken")
+    if(!userProfile){
+      throw new ApiError(400,"User not found")
+    }
+    return res
+    .status(200)
+    .json(
+      new ApiResponse(200,userProfile,"")
+    )
+} catch (error) {
+  console.log("Someting is wrong in line 132 to 142 :",error)
+}
+})
+
+export const editProfile=asyncHandler(async(req,res)=>{
+  try {
+    const userId=req.user._id
+    const {bio,gender} = req.body
+    const profilePicture=req.field
+    let cloudResponse;
+
+    if(profilePicture){
+      const fileUri= getDataUri(profilePicture)
+    }
+  } catch (error) {
+    
+  }
 })
