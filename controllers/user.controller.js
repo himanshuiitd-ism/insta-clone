@@ -2,8 +2,8 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
 import getDataUri from "../utils/datauri.js";
+import cloudinary from "../utils/cloudinary.js";
 
 const generateAccessAndRefreshToken=async (userId)=>{
   try {
@@ -100,12 +100,12 @@ export const login=asyncHandler(async(req,res)=>{
         accessToken,
         refreshToken
       },
-      "User login succesfull"
+      `Welcome Back ${logedInUser.username}`
     )
   )
 })
 
-export const logout = asyncHandler(async(_ , res)=>{
+export const logout = asyncHandler(async(req , res)=>{
   await User.findByIdAndUpdate(
     req.user._id,
     {
@@ -150,17 +150,123 @@ try {
 }
 })
 
-export const editProfile=asyncHandler(async(req,res)=>{
+export const editProfile = asyncHandler(async (req, res) => {
   try {
-    const userId=req.user._id
-    const {bio,gender} = req.body
-    const profilePicture=req.field
-    let cloudResponse;
+    const userId = req.user._id;
+    const { bio, gender } = req.body;
+    const profilePicture = req.file;
 
-    if(profilePicture){
-      const fileUri= getDataUri(profilePicture)
+    const user = await User.findById(userId);
+    if (!user) throw new ApiError(404, "User not found");
+
+    // Handle profile picture update
+    if (profilePicture) {
+      // Delete old image if exists
+      if (user.profilePicture?.publicId) {
+        await cloudinary.uploader
+          .destroy(user.profilePicture.publicId)
+          .catch(error => console.error("Old image deletion failed:", error));
+      }
+
+      // Upload new image
+      const fileUri = getDataUri(profilePicture);
+      const cloudResponse = await cloudinary.uploader.upload(fileUri, {
+        folder: `users/${userId}`,
+        transformation: [
+          { width: 500, height: 500, crop: 'fill', quality: 'auto' },
+          { fetch_format: 'auto' }
+        ]
+      });
+
+      user.profilePicture = {
+        url: cloudResponse.secure_url,
+        publicId: cloudResponse.public_id
+      };
     }
+
+    // Update other fields
+    if (bio !== undefined) user.bio = bio;
+    if (gender !== undefined) user.gender = gender;
+
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json(
+      new ApiResponse(200, {
+        _id: user._id,
+        username: user.username,
+        profilePicture: user.profilePicture,
+        bio: user.bio,
+        gender: user.gender
+      }, "Profile updated successfully")
+    );
+
   } catch (error) {
-    
+    throw new ApiError(error.statusCode || 500, error.message || "Profile update failed");
   }
+});
+
+export const getSuggestedUser=asyncHandler(async(req,res)=>{
+  try {
+    const suggestedUser = await User.find({
+      _id:{$ne:req.user._id}
+    })
+    .select("-password -refreshToken")
+    .limit(10)
+
+    if(!suggestedUser){
+      throw new ApiError(400,"Currently do not have any User")
+    }
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200,{users:suggestedUser},""))
+  } catch (error) {
+    console.log("error in suggestion part: ",error)
+  }
+})
+
+export const followOrUnfollow=asyncHandler(async(req,res)=>{
+  try {
+    const followKrneWala=req.user._id
+    const jiskoFollowKrunga=req.params._id
+
+    if(followKrneWala === jiskoFollowKrunga){
+      throw new ApiError(401,"You can't folllow urself")
+    }
+
+    const user = await User.findById(followKrneWala)
+    const targetUser=await User.findById(jiskoFollowKrunga)
+
+    if(!user || !targetUser){
+      throw new ApiError(400,"User not found")
+    }
+
+    const isFollowing = user.following.includes(jiskoFollowKrunga)
+
+    if(isFollowing){
+      await Promise.all([
+        User.updateOne({_id:followKrneWala},{$pull:{following:jiskoFollowKrunga}}),
+        User.updateOne({_id:jiskoFollowKrunga},{$pull:{followers:followKrneWala}})
+      ])
+      return res.
+      status(200)
+      .json(
+        new ApiResponse(200,"","Unfollow Successfully")
+      )
+    }else{
+      //when we need to involve multiple db calls so as it takes time we return the promise
+      //yaha initial state change krna hai iseleye updateone
+      await Promise.all([
+        User.updateOne({_id:followKrneWala},{$push:{following:jiskoFollowKrunga}}),
+        User.updateOne({_id:jiskoFollowKrunga},{$push:{followers:followKrneWala}}) //no await is needed as promise all is like await
+      ])
+      return res.
+      status(200)
+      .json(
+        new ApiResponse(200,"","followed Successfully")
+      )
+    }
+  }  catch (error) {
+  throw new ApiError(500, error.message || "Follow/unfollow failed");
+}
 })

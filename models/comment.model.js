@@ -2,7 +2,7 @@ import mongoose , {Schema} from "mongoose";
 
 const commentSchema=new Schema({
   text:{
-    type:true,
+    type:String,
     required:true
   },
   author:{
