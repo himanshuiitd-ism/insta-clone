@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./utils/db.js";
 import dotenv from "dotenv";
 import userRoute from "./routes/user.route.js"
+import postRoute from "./routes/post.route.js"
 dotenv.config({})
 
 const app=express();
@@ -29,7 +30,16 @@ const corsOptions={
 }
 app.use(cors(corsOptions))
 
+
+
 app.use("/api/v1/user",userRoute)
+app.use("/api/v1/post",postRoute)
+app.use((err, req, res, next) => {
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error"
+  });
+});
 
 app.listen(PORT , ()=>{
   connectDB();

@@ -17,3 +17,12 @@ export const userApiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false
 });
+
+// Rate limiting configuration (add this to your rateLimit.middleware.js)
+export const postCreationLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // Allow 10 post creations per hour per user
+  message: 'Too many post creations, please try again later',
+  standardHeaders: true,
+  legacyHeaders: false
+});

@@ -1,94 +1,92 @@
 import sharp from "sharp";
-import asyncHandler from "../utils/asyncHandler";
+import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import cloudinary from "../utils/cloudinary.js";
 import { Post } from "../models/post.model.js";
 import { User } from "../models/user.model.js";
+import { Comment } from "../models/comment.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
 
-export const post=asyncHandler(async(req,res)=>{
- try {
-   const {caption}=req.body
-   const image=req.file
-   const authorId=req.user._id
- 
-   if(!image) throw new ApiError(404,"Image required")
- 
-   //this part is for image uploding ,image may be of large size so we use sharp lib to reduce the size of image  
- 
-   const optimizedBufferImage=await sharp(image.buffer)
-   .resize({width:800,height:800,fit:'inside'})
-   .toFormat('jpeg' , {quality:80})
-   .toBuffer()
-   //buffer to datauri
-   const fileUri=`data:image/jpeg;base64,${optimizedBufferImage.toString('base64')}`
- 
-   //fileUri ko cloudinary pe upload kr do
-   const cloudResponse = await cloudinary.uploader.upload(fileUri)
- 
-   const post = Post.create({
-     caption,
-     image:cloudResponse.secure_url,
-     author:authorId
-   })
-   
-   //now we need to show all user this created post so we need to push this in user.schema.js
-   const user=User.findById(authorId)
-   if(user){
-     //pura maal daal ke space bharne se aacha hai id push kr de bs aur baad me ui ke lea post se le lena id match kr ke
-     user.posts.push(post_id)
-     //for updated data we use save()
-     //user ka post update kr do
-     await user.save()
-   }
- 
-   // Replaces ObjectIds with full Post documents and for this we use populate method
- 
-   await post.populate({
-     path:'author',
-     Select:"-password"
-   })
- 
-   return res
-   .status(200)
-   .json(
-     new ApiResponse(200,post,"Post created successfully")
-   )
- } catch (error) {
-    throw new ApiError(400,error.message || "Post creation failed")
- }
-})
+export const post = asyncHandler(async (req, res) => {
+  try {
+    const { caption } = req.body;
+    const image = req.file;
+    const authorId = req.user._id;
+
+    if (!image) throw new ApiError(400, "Image required");
+
+    // Optimize image
+    const optimizedBuffer = await sharp(image.buffer)
+      .resize({ width: 800, height: 800, fit: 'inside' })
+      .jpeg({ quality: 80 })
+      .toBuffer();
+
+    // Upload to Cloudinary
+    const cloudResponse = await cloudinary.uploader.upload(
+      `data:image/jpeg;base64,${optimizedBuffer.toString('base64')}`
+    );
+
+    // Create post
+    const createdPost = await Post.create({
+      caption,
+      image: cloudResponse.secure_url,
+      author: authorId
+    });
+
+    // Update user's posts array
+    await User.findByIdAndUpdate(
+      authorId,
+      { $push: { posts: createdPost._id } },
+      { new: true }
+    );
+
+    // Populate author details
+    const populatedPost = await Post.findById(createdPost._id)
+      .populate('author', '-password');
+
+    return res
+      .status(201)
+      .json(new ApiResponse(201, populatedPost, "Post created successfully"));
+
+  } catch (error) {
+    throw new ApiError(400, error.message || "Post creation failed");
+  }
+});
 
 //all post (mainly on home screen)
-export const getPost=asyncHandler(async(req,res)=>{
+// In post.controller.js
+export const getPost = asyncHandler(async(req, res) => {
   try {
-    const posts = await Post.find().sort({createdAt:-1})
-    .populate(
-      {
-        path:'author', //author user see hi populate hoga bina nested populate kea hue
-        Select:'username , profilePicture' //user me se inko use kr ke hi populate krna
-      }
-    )
-    .populate(
-      {
-        path:'comments',
-        sort:{createdAt:-1},
-        populate:{
-          path:'author',
-          Select:'username , profilePicture'
+    const posts = await Post.find()
+      .sort({ createdAt: -1 })
+      .populate({
+        path: 'author',
+        select: 'username profilePicture' // lowercase 'select'
+      })
+      .populate({
+        path: 'comments',
+        options: { sort: { createdAt: -1 } },
+        populate: {
+          path: 'author',
+          select: 'username profilePicture'
         }
-      }
-    )
-    return res
-    .status(200)
-    .json(
-      new ApiResponse(200,posts,"")
-    )
-  } catch (error) {
-    throw new ApiError(400,"No posts available")
-  }
-})
+      });
 
+    if (!posts || posts.length === 0) {
+      return res.status(200).json(
+        new ApiResponse(200, [], "No posts found")
+      );
+    }
+
+    return res.status(200).json(
+      new ApiResponse(200, posts, "Posts fetched successfully")
+    );
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw new ApiError(500, error.message || "Error fetching posts");
+  }
+});
 //only my post on my profile page 
 export const getUserPost=asyncHandler(async(req,res)=>{
   try {
@@ -124,7 +122,7 @@ export const getUserPost=asyncHandler(async(req,res)=>{
 export const likeDislike=asyncHandler(async(req,res)=>{
   try {
       const likeKrneWaleKiId=req.user._id
-      const postId=req.params._id //isse post ka id milega na ki post daalne wale user ka
+      const postId=req.params.postId //params ke baad wahi name do jo router me ":" iske baad dea ho
       const post = await Post.findById(postId)
       if(!post){
         throw new ApiError(400,"Post not found")
@@ -147,53 +145,65 @@ export const likeDislike=asyncHandler(async(req,res)=>{
       .status(200)
       .json(new ApiResponse(200, updatedPost , isLiked? "Unliked" : "Liked"))
   } catch (error) {
-      throw new ApiError(400,error.messgae || "like unlike failed")
+    console.log(error)
+      throw new ApiError(400,error.message || "like unlike failed")
     }
 })
 
 //add comment ke lea ye use krna hai
 export const addComment = asyncHandler(async(req,res)=>{
 try {
-    const postId=req.params._id
+    const postId=req.params.postId //params ke baad wahi name do jo router me ":" iske baad dea ho
     const commentKrneWaleKiId=req.user._id
-    const {text} = req.body
+    const { text } = req.body
+
     if(!text){
       throw new ApiError(400,"text is required")
     }
+
     const post=await Post.findById(postId)
+    if(!post){
+      throw new ApiError(404,"Post not found")
+    }
+
     const comment = await Comment.create({
       text,
       author:commentKrneWaleKiId,
       post:postId
-    }).populate({
-      path:'author',
-      Select:'username , profilePicture'
     })
-  
-    post.comments.push(comment)
+    const populatedComment = await Comment.findById(comment._id).populate(
+      {
+      path:'author',
+      Select:'username profilePicture'
+      }
+    )
+
+    post.comments.push(populatedComment)
     await post.save()
+
     return res
     .status(200)
     .json(new ApiResponse(200,comment,"Comment added"))
   } catch (error) {
-      throw new ApiError(400,"Comment not added")
+      throw new ApiError(400,error.message)
   }
 })
 
 //now get comments according to posts 
-export const getCommentsAccordingToPost=asyncHandler(async(req,res)=>{
+export const getCommentsAccordingToPost=asyncHandler(async(req,res)=>{ //isme bhi sort laga dena to arrange all comment
   try {
-    const postId=req.params._id
+    const postId=req.params.postId //params ke baad wahi name do jo router me ":" iske baad dea ho
 
-    const commentsOnThatPost = await Comment.find({post:postId}).populate({
+    const commentsOnThatPost = await Comment.find({post:postId}).sort({createdAt:-1})
+    .populate({
       path:'author',
       Select:'username , profilePicture'
     }) //ye sara comments user ko getUserPost and getPost me mil jaega hm bs sara ek post pr wala comments ek jagah la ke rkh dea hai (it's like ki getUserPost and getPost ko commet se populate(connect) kr do and comment ko sara same postid wale comment se populate kr do)
 
     //iska mtlb hai un sare comment ko find kro jinka post me id postid ke equal hai aur wo equal hoga kyu ki ref dea hua hai
 
-    if(!commentsOnThatPost){
-      throw new ApiError(400,"No comments yet")
+    if (!commentsOnThatPost || commentsOnThatPost.length === 0) {
+      throw new ApiError(400, "No comments yet");
     }
 
     return res
@@ -208,9 +218,9 @@ export const getCommentsAccordingToPost=asyncHandler(async(req,res)=>{
 //In MongoDB and Mongoose, findOne() means: "Find the first document that matches ALL of the specified criteria"
 export const deleteComment= asyncHandler(async(req,res)=>{
   try {
-    const postId=req.params._id
-    const commentKrneWaleKiId=req.user._id
-    const {commentId}=req.body
+    const postId=req.params.postId //params ke baad wahi name do jo router me ":" iske baad dea ho "hamko dena hai"
+    const commentKrneWaleKiId=req.user._id //ye dena nahi hai ye automatically check hoga 
+    const {commentId}=req.body //ye hamko dena hai
 
     // Validate required fields
     if (!commentId) {
@@ -242,5 +252,70 @@ export const deleteComment= asyncHandler(async(req,res)=>{
     )
   } catch (error) {
     throw new ApiError(400,"Comment deletion failed")
+  }
+})
+
+export const deletePost=asyncHandler(async(req,res)=>{
+  try {
+    const postId = req.params.postId //params ke baad wahi name do jo router me ":" iske baad dea ho
+    const userId = req.user._id
+    const post = await Post.findOne({_id:postId ,author:userId})
+    if(!post){
+      throw new ApiError(404,"Post not found or unotharised")
+    }
+    await post.deleteOne({_id:postId}); // Fixed: Use `deleteOne` on the Model, not the instance
+
+
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull:{posts:postId}
+      },
+      {new:true} //this works same as user.save()
+    )
+    
+    await Comment.deleteMany({post:postId})
+
+    return res
+    .status(200)
+    .json(
+      new ApiResponse(200,{},"Post deleted")
+    )
+  } catch (error) {
+    throw new ApiError( error.statusCode || 500,
+      error.message || "Post deletion failed")
+  }
+})
+
+export const bookMarkPost = asyncHandler(async(req,res)=>{
+  try{
+  const userId = req.user._id
+  const postId = req.params.postId //params ke baad wahi name do jo router me ":" iske baad dea ho
+
+  if (!mongoose.isValidObjectId(postId)) {
+    throw new ApiError(400, "Invalid post ID");
+  }
+  const post = await Post.findById(postId)
+  if(!post){
+    throw new ApiError(404,"Post not found")
+  }
+
+  const user = await User.findById(userId)
+  const isBookmarked = user.bookmarks.includes(postId)
+
+  if (isBookmarked){
+    user.bookmarks=user.bookmarks.filter(id => id.toString() !== postId.toString())
+    // I used this "user.bookmarks=" bcoz hame purane bookmark ko hata ke usme new bookmark daalna padega na  
+  }else{
+    user.bookmarks.push(postId)
+  }
+
+  await user.save()
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200,{},isBookmarked ? "Removed from bookmarks" : "Added to bookmarks" ))
+  } catch (error) {
+    throw new ApiError(error.statusCode, error.message || "bookmarke failed")
   }
 })
