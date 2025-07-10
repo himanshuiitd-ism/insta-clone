@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
+import { Post } from "../models/post.model.js";
 
 const generateAccessAndRefreshToken=async (userId)=>{
   try {
@@ -81,7 +82,13 @@ export const login=asyncHandler(async(req,res)=>{
 
   const {accessToken,refreshToken}=await generateAccessAndRefreshToken(user._id) //after this User got refreshed
 
-  const logedInUser=await User.findById(user._id).select("-password -refreshToken")
+  // Populate user's posts
+  const logedInUser  = await User.findById(user._id)
+    .select("-password -refreshToken") // Exclude sensitive fields
+    .populate({
+      path: 'posts',
+      select: 'caption image createdAt likes comments', // Adjust the fields you want to select from posts
+    });
 
   const options={
     httpOnly:true,
@@ -98,7 +105,8 @@ export const login=asyncHandler(async(req,res)=>{
       {
         user:logedInUser,
         accessToken,
-        refreshToken
+        refreshToken //this is client side ref token , we match this from backend and if both are same ,we do what we have to do.
+        //both acc and ref token are needed to present at client side
       },
       `Welcome Back ${logedInUser.username}`
     )
