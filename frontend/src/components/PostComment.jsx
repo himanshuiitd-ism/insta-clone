@@ -18,7 +18,7 @@ const PostComment = forwardRef(({ open, onClose }, ref) => {
 
       <div className="comment-modal-content">
         <div className="comment-heading">
-          <a href="" className="comment-profile">
+          <Link to="" className="comment-profile">
             <img
               src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
               alt="Profile"
@@ -29,7 +29,7 @@ const PostComment = forwardRef(({ open, onClose }, ref) => {
             >
               Username
             </span>
-          </a>
+          </Link>
           <div className="close-icon" onClick={() => setClose(!close)}>
             <BsThreeDots />
           </div>

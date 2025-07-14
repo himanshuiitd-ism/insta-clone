@@ -84,16 +84,19 @@ const Loginme = () => {
           </button>
 
           <span>
-            <a href="" style={{ color: "blue", textDecoration: "none" }}>
+            <Link to="" style={{ color: "blue", textDecoration: "none" }}>
               forgot Password ?
-            </a>
+            </Link>
           </span>
           <br />
           <span>
             Doesn't have an account?{" "}
-            <a href="/signup" style={{ color: "blue", textDecoration: "none" }}>
+            <Link
+              to="/signup"
+              style={{ color: "blue", textDecoration: "none" }}
+            >
               Signup
-            </a>
+            </Link>
           </span>
         </div>
       </form>

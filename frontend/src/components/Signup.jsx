@@ -93,9 +93,9 @@ const SignUp = () => {
           </button>
           <span>
             Already have an account?{" "}
-            <a href="/login" style={{ color: "blue", textDecoration: "none" }}>
+            <Link to="/login" style={{ color: "blue", textDecoration: "none" }}>
               Login
-            </a>
+            </Link>
           </span>
         </div>
       </form>
