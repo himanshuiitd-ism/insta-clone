@@ -3,11 +3,13 @@ import image from "./images/image.png";
 import { FiSend } from "react-icons/fi";
 import PostComment from "./PostComment";
 import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
 
-const Post = () => {
+const Post = ({ post }) => {
   const [postComment, setPostComment] = useState("");
   const [open, setOpen] = useState(false);
   const commentRef = useRef(null);
+  const { user } = useSelector((state) => state.auth);
 
   const handleCommentClick = (e) => {
     e.stopPropagation();
@@ -27,17 +29,50 @@ const Post = () => {
       {/* Post Header */}
       <div className="post-header">
         <div className="post-profile">
-          <img src={image} alt="Profile" />
+          <img src={post.author?.profilePicture.url || image} alt="Profile" />
         </div>
-        <div className="post-username">Username</div>
-        <div className="follAndUnf">Follow</div>
+        <div className="post-username">{post.author.username}</div>
+        <div className="follAndUnf">
+          {user?.username === post.author.username ? "Delete" : "Follow"}
+        </div>
       </div>
 
       {/* Post Image */}
-      <div className="post-middle">
+      <div
+        className="post-middle"
+        style={{
+          position: "relative",
+          overflow: "hidden", // Ensures blur doesn't leak outside
+          height: "400px", // Set a fixed height (adjust as needed)
+          backgroundColor: "#f0f0f0", // Fallback background
+        }}
+      >
+        {/* Blurry Background Image */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: `url(${post.image.url})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(5px)",
+          }}
+        />
+
+        {/* Main Image (sharp) */}
         <img
-          src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+          src={post.image.url}
           alt="Post"
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            zIndex: 1,
+          }}
         />
       </div>
 
@@ -60,16 +95,17 @@ const Post = () => {
           </span>
         </div>
 
-        <div className="post-likes">100 likes</div>
+        <div className="post-likes">{post.likes.length} likes</div>
         <div className="post-caption">
-          <span style={{ fontWeight: "500" }}>username</span> caption
+          <span style={{ fontWeight: "500" }}>{post.author.username}</span>{" "}
+          {post.caption}
         </div>
         <span
           className="post-comment-count"
           onClick={handleCommentClick}
           style={{ cursor: "pointer", color: "gray" }}
         >
-          View all 10 comments
+          View all {post.comments.length} comments
         </span>
 
         {/* Comment Input */}

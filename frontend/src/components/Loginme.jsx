@@ -2,6 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setAuthUser } from "../redux/authSlice";
+import store from "../redux/store";
 
 const Loginme = () => {
   const [input, setInput] = useState({
@@ -10,6 +13,7 @@ const Loginme = () => {
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -29,7 +33,9 @@ const Loginme = () => {
           withCredentials: true,
         }
       );
+
       if (res.data.success) {
+        dispatch(setAuthUser(res.data.data.user));
         navigate("/");
         toast.success(res.data.message);
         setInput({
@@ -84,19 +90,16 @@ const Loginme = () => {
           </button>
 
           <span>
-            <Link to="" style={{ color: "blue", textDecoration: "none" }}>
+            <a href="" style={{ color: "blue", textDecoration: "none" }}>
               forgot Password ?
-            </Link>
+            </a>
           </span>
           <br />
           <span>
             Doesn't have an account?{" "}
-            <Link
-              to="/signup"
-              style={{ color: "blue", textDecoration: "none" }}
-            >
+            <a href="/signup" style={{ color: "blue", textDecoration: "none" }}>
               Signup
-            </Link>
+            </a>
           </span>
         </div>
       </form>

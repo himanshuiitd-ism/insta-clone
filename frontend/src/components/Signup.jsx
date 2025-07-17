@@ -58,7 +58,7 @@ const SignUp = () => {
             <br />
             <input
               type="text"
-              name="username"
+              name="username" //name is use to identify the input
               className="signup-input"
               value={input.username}
               onChange={changeEventHandler}
@@ -93,9 +93,9 @@ const SignUp = () => {
           </button>
           <span>
             Already have an account?{" "}
-            <Link to="/login" style={{ color: "blue", textDecoration: "none" }}>
+            <a href="/login" style={{ color: "blue", textDecoration: "none" }}>
               Login
-            </Link>
+            </a>
           </span>
         </div>
       </form>

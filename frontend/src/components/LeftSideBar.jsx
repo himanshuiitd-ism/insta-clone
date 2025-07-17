@@ -11,7 +11,14 @@ import {
 } from "react-icons/fa";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuthUser } from "../redux/authSlice";
+import CreatePost from "./CreatePost";
+import { useState } from "react";
 const LeftSideBar = () => {
+  const { user } = useSelector((state) => state.auth);
+  const [postOpen, setPostOpen] = useState(false);
+
   const sidebarElements = [
     { name: "Home", logo: <FaHome /> },
     { name: "Search", logo: <FaSearch /> },
@@ -19,11 +26,19 @@ const LeftSideBar = () => {
     { name: "Messages", logo: <IoIosChatbubbles /> },
     { name: "Notifications", logo: <FaHeart /> },
     { name: "Create", logo: <FaPlusSquare /> },
-    { name: "Profile", logo: <FaUser /> },
+    {
+      name: "Profile",
+      logo: (
+        <div className="profile-photo-sidebar">
+          <img src={user?.profilePicture.url} />
+        </div>
+      ),
+    },
     { name: "LogOut", logo: <FaArrowAltCircleLeft /> },
   ];
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const logoutHandler = async () => {
     try {
       const res = await axios.post(
@@ -34,6 +49,7 @@ const LeftSideBar = () => {
         }
       );
       if (res.data.success) {
+        dispatch(setAuthUser(null));
         navigate("/login");
         toast.success(res.data.message);
       }
@@ -46,6 +62,7 @@ const LeftSideBar = () => {
 
   const clickHandler = (name) => {
     if (name === "LogOut") logoutHandler();
+    else if (name === "Create") setPostOpen(!postOpen);
   };
   return (
     <div className="leftSideBar">
@@ -65,6 +82,11 @@ const LeftSideBar = () => {
           </div>
         ))}
       </div>
+      {postOpen && (
+        <div className="createPost" onClick={() => setPostOpen(false)}>
+          <CreatePost postOpen={postOpen} setPostOpen={setPostOpen} />
+        </div>
+      )}
     </div>
   );
 };
