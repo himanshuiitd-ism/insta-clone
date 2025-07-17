@@ -6,9 +6,15 @@ const postSchema=new Schema(
       type:String,
       default:''
     },
-    image:{
-      type:String,
-      required:true, //1post have 1 image 
+    image: {
+      url: {
+        type: String,
+        required: true
+      },
+      publicId: {
+        type: String,
+        required: true
+      }
     },
     author:{
       type:Schema.Types.ObjectId,

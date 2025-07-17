@@ -30,7 +30,10 @@ export const post = asyncHandler(async (req, res) => {
     // Create post
     const createdPost = await Post.create({
       caption,
-      image: cloudResponse.secure_url,
+       image: {
+        url: cloudResponse.secure_url,
+        publicId: cloudResponse.public_id
+      },
       author: authorId
     });
 
