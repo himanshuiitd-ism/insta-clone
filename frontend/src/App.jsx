@@ -5,6 +5,8 @@ import MainLayout from "./components/MainLayout";
 import Home from "./components/Home";
 import Loginme from "./components/Loginme";
 import Profile from "./components/Profile";
+import { cleanupInvalidData } from "./utils/cleanup";
+import { useEffect } from "react";
 
 const browserRouter = createBrowserRouter([
   {
@@ -16,7 +18,7 @@ const browserRouter = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/profile",
+        path: "/:id/profile",
         element: <Profile />,
       },
     ],
@@ -32,6 +34,11 @@ const browserRouter = createBrowserRouter([
 ]);
 
 function App() {
+  useEffect(() => {
+    // Clean up invalid data when app starts
+    cleanupInvalidData();
+  }, []);
+
   return <RouterProvider router={browserRouter} />;
 }
 

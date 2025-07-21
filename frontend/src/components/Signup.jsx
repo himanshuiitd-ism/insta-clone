@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SignUp = () => {
   const [input, setInput] = useState({
@@ -93,9 +94,9 @@ const SignUp = () => {
           </button>
           <span>
             Already have an account?{" "}
-            <a href="/login" style={{ color: "blue", textDecoration: "none" }}>
+            <Link to="/login" style={{ color: "blue", textDecoration: "none" }}>
               Login
-            </a>
+            </Link>
           </span>
         </div>
       </form>

@@ -1,6 +1,7 @@
 import React from "react";
 import Post from "./Post";
 import { useSelector } from "react-redux";
+import ErrorBoundary from "./ErrorBoundary";
 
 const Posts = () => {
   // Correct the state path to match your Redux structure
@@ -15,7 +16,9 @@ const Posts = () => {
   return (
     <div>
       {posts.map((post) => (
-        <Post key={post._id} post={post} />
+        <ErrorBoundary key={post._id}>
+          <Post post={post} />
+        </ErrorBoundary>
       ))}
     </div>
   );

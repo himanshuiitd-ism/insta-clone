@@ -1,7 +1,8 @@
-body{
+body {
   margin: 0;
   padding: 0;
-   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
 }
 .signup-box {
   height: max-content;
@@ -22,35 +23,34 @@ body{
   transform: translate(-50%, -50%);
   padding: 15px;
   border-radius: 10px;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
-
-.signup-heading{
+.signup-heading {
   text-align: center;
   gap: 20px;
 }
 
-.signup-body{
+.signup-body {
   display: flex;
   flex-direction: column;
-  gap:30px;
+  gap: 30px;
   margin-top: 30px;
 }
 
-.signup-body-component{
+.signup-body-component {
   display: flex;
   flex-direction: column;
   line-height: 10px;
 }
 
-.signup-component-name{
-  padding-left:5px;
+.signup-component-name {
+  padding-left: 5px;
   /* font-size: 18px; */
   font-weight: 500;
 }
 
-.signup-input{
+.signup-input {
   color: black;
   border: 1px solid rgb(200, 200, 200);
   height: 40px;
@@ -62,16 +62,16 @@ body{
   box-sizing: border-box;
 }
 
-.signup-input:focus{
+.signup-input:focus {
   outline: none;
   background-color: white;
 }
 
-.signup-button{
+.signup-button {
   text-align: center;
 }
 
-.signup-button button{
+.signup-button button {
   margin-top: 40px;
   width: 100%;
   margin-bottom: 15px;
@@ -84,7 +84,7 @@ body{
   border-radius: 0.5rem;
 }
 
-.signup-button button:hover{
+.signup-button button:hover {
   background-color: rgb(56, 56, 56);
   cursor: pointer;
 }
@@ -99,8 +99,12 @@ body{
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media screen and (max-width: 500px) {
@@ -114,90 +118,350 @@ body{
     height: 100%;
   }
 }
-
-.leftSideBar { /*I have just increased postComment personal z-index insteed of whole feed*/
+/* Desktop LeftSideBar */
+.leftSideBar {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding-left: 10px;
-  padding-top: 20px;
+  padding: 20px 10px;
   height: 100vh;
   width: 16vw;
+  min-width: 250px;
   position: fixed;
-  z-index: 2;
-  border-right: 0.10rem solid rgb(206, 206, 206);
+  top: 0;
+  left: 0;
+  z-index: 100;
+  border-right: 1px solid #dbdbdb;
+  background: white;
+  overflow-y: auto;
+  overflow-x: visible;
 }
 
-.leftSideBar .logo img{
-  position: relative;
-  height: 37px;
-  width: 65px;
-}
-
-.leftSideBar .logo{
+/* Logo Section */
+.leftSideBar .logo {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+  padding: 0 5px;
 }
 
-.leftSideBar .logo span{
-  font-size: 2rem;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+.leftSideBar .logo img {
+  height: 37px;
+  width: 37px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
 }
 
-.leftSideBarLv1{
-  position: relative;
-  top: 30px;
+.leftSideBar .logo span {
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  color: #262626;
+}
+
+/* Sidebar Navigation */
+.leftSideBarLv1 {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  font-size: 1.25rem;
-}
-
-.leftSideBarLv2{
-  text-decoration: none;
-  color: rgb(42, 42, 42);
-  height: 40px;
-  padding-left: 5px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.leftSideBarLv1 .icon{
-  font-size: 1.5rem;
-  margin-right: 1rem;
-}
-
-.leftSideBarLv1 .elementName{
-  font-size: 1.4rem;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  gap: 4px;
 }
 
 .leftSideBarLv2 {
-  display: flex; /* Ensure it's a flex container */
-  align-items: center; /* Center items vertically */
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: #262626;
+  text-decoration: none;
+  position: relative;
 }
 
-.leftSideBarLv1 :hover{
-  background-color: rgb(226, 226, 226);
-  border-radius: 5px;
+.leftSideBarLv2:hover {
+  background-color: #f5f5f5;
 }
 
-.leftSideBarLv1 a:hover{
-  color: rgb(0, 0, 0);
+.leftSideBarLv2:active {
+  transform: scale(0.98);
 }
 
+/* Icons */
+.leftSideBarLv1 .icon {
+  font-size: 1.5rem;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+}
+
+/* Profile Photo in Sidebar */
+.profile-photo-sidebar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 16px;
+}
+
+.profile-photo-sidebar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Element Names */
+.leftSideBarLv1 .elementName {
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  white-space: nowrap;
+}
+
+/* Tooltip styles for desktop hover */
+.leftSideBarLv2 .tooltip-hover {
+  position: fixed;
+  left: calc(16vw + 15px);
+  top: var(--tooltip-top, 50%);
+  transform: translateY(-50%);
+  background: rgba(38, 38, 38, 0.95);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.leftSideBarLv2 .tooltip-hover::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -6px;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: rgba(38, 38, 38, 0.95);
+}
+
+/* Modal Overlays */
+.createPost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+  .leftSideBar {
+    width: 20vw;
+    min-width: 200px;
+    overflow-x: visible;
+  }
+
+  .leftSideBar .logo span {
+    font-size: 1.5rem;
+  }
+
+  .leftSideBarLv1 .elementName {
+    font-size: 0.9rem;
+  }
+
+  /* Update tooltip position for tablet */
+  .leftSideBarLv2 .tooltip-hover {
+    left: calc(20vw + 15px);
+  }
+}
+
+/* Small Tablet / Large Mobile */
+@media (max-width: 768px) {
+  .leftSideBar {
+    width: 70px;
+    min-width: 70px;
+    padding: 20px 8px;
+    align-items: center;
+    overflow-x: visible;
+  }
+
+  /* Hide text, show only icons */
+  .leftSideBar .logo span,
+  .leftSideBarLv1 .elementName {
+    display: none;
+  }
+
+  .leftSideBar .logo {
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .leftSideBarLv2 {
+    padding: 12px;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+
+  .leftSideBarLv1 .icon {
+    margin-right: 0;
+    font-size: 1.75rem;
+  }
+
+  .profile-photo-sidebar {
+    margin-right: 0;
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Update tooltip position for mobile sidebar */
+  .leftSideBarLv2 .tooltip-hover {
+    left: calc(70px + 15px);
+  }
+
+  /* Tooltip for mobile icons - keep existing */
+  .leftSideBarLv2::after {
+    content: attr(data-tooltip);
+    position: fixed;
+    left: calc(70px + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: #262626;
+    color: white;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10000;
+  }
+
+  .leftSideBarLv2:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Mobile Bottom Navigation */
+@media (max-width: 480px) {
+  .leftSideBar {
+    width: 100%;
+    height: 60px;
+    top: auto;
+    bottom: 0;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+    border-right: none;
+    border-top: 1px solid #dbdbdb;
+  }
+
+  .leftSideBar .logo {
+    display: none;
+  }
+
+  .leftSideBarLv1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    gap: 0;
+  }
+
+  .leftSideBarLv2 {
+    padding: 8px;
+    width: auto;
+    height: auto;
+    min-width: 44px;
+    justify-content: center;
+  }
+
+  .leftSideBarLv2::after {
+    display: none;
+  }
+
+  /* Hide desktop tooltips on mobile */
+  .leftSideBarLv2 .tooltip-hover {
+    display: none;
+  }
+
+  .leftSideBarLv1 .icon {
+    font-size: 1.5rem;
+  }
+
+  .profile-photo-sidebar {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Hide some elements on mobile for space */
+  .leftSideBarLv2:nth-child(n + 6) {
+    display: none;
+  }
+
+  /* Show only essential items: Home, Search, Create, Notifications, Profile */
+  .leftSideBarLv2:nth-child(1),
+  .leftSideBarLv2:nth-child(2),
+  .leftSideBarLv2:nth-child(5),
+  .leftSideBarLv2:nth-child(6),
+  .leftSideBarLv2:nth-child(7) {
+    display: flex;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 320px) {
+  .leftSideBar {
+    height: 50px;
+    padding: 4px 0;
+  }
+
+  .leftSideBarLv2 {
+    padding: 6px;
+    min-width: 40px;
+  }
+
+  .leftSideBarLv1 .icon {
+    font-size: 1.25rem;
+  }
+
+  .profile-photo-sidebar {
+    width: 20px;
+    height: 20px;
+  }
+}
 /* Home.jsx */
 
-.home{
+.home {
   display: grid;
   width: calc(100vw - 18vw);
   grid-template-columns: 70% 30%;
   margin-left: 16vw;
 }
 
-.home-left{
+.home-left {
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -206,7 +470,7 @@ body{
   gap: 20px;
 }
 
-.home-right{
+.home-right {
   display: flex;
   align-items: center;
   overflow: auto;
@@ -224,20 +488,20 @@ body{
   align-items: center;
 }
 
-.post{
+.post {
   height: max-content;
   width: 100%;
   margin-bottom: 2rem;
 }
 
-.post-header{
+.post-header {
   height: 3rem;
   background-color: transparent;
   display: flex;
   position: relative;
 }
 
-.post-profile{
+.post-profile {
   height: 2.25rem;
   width: 2.25rem;
   border-radius: 1rem;
@@ -246,14 +510,14 @@ body{
   top: 0.5rem;
 }
 
-.post-profile img{
+.post-profile img {
   height: 100%;
   width: 100%;
   border-radius: 50%;
   object-fit: cover;
 }
 
-.post-username{
+.post-username {
   position: absolute;
   left: 3.5rem;
   top: 0.5rem;
@@ -261,12 +525,12 @@ body{
   font-size: 1.5rem;
 }
 
-.post-username:hover{
+.post-username:hover {
   color: purple;
   cursor: pointer;
 }
 
-.follAndUnf{
+.follAndUnf {
   position: absolute;
   right: 10px;
   top: 0.5rem;
@@ -274,37 +538,37 @@ body{
   font-size: 1.5rem;
   color: black;
 }
-.follAndUnf:hover{
+.follAndUnf:hover {
   color: purple;
   cursor: pointer;
 }
 
-.post-middle{
+.post-middle {
   width: 100%;
   height: 500px;
 }
-.post-middle img{
+.post-middle img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 0.25rem;
 }
 
-.post-bottom{
+.post-bottom {
   width: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
-.post-bottom-icons{
+.post-bottom-icons {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding-left: 10px;
   padding-right: 10px;
 }
-.post-bottom-icons .post-bottom-icon{
+.post-bottom-icons .post-bottom-icon {
   font-size: 1.5rem;
   color: rgb(62, 62, 62);
   display: flex;
@@ -316,11 +580,11 @@ body{
   cursor: pointer;
 }
 
-.bottom-icon :hover{
+.bottom-icon :hover {
   color: purple;
 }
 
-.bookmark{
+.bookmark {
   position: absolute;
   right: 10px;
   top: 0.5rem;
@@ -329,19 +593,19 @@ body{
   color: rgb(58, 58, 58);
 }
 
-.bookmark:hover{
+.bookmark:hover {
   color: purple;
   cursor: pointer;
 }
 
-.post-comment{
+.post-comment {
   display: grid;
   grid-template-columns: 85% 15%;
   height: 30px;
   margin-top: 5px;
 }
 
-.postComment{
+.postComment {
   width: 100%;
   height: 100%;
   display: flex;
@@ -349,7 +613,7 @@ body{
   justify-content: center;
 }
 
-.post-comment input{
+.post-comment input {
   width: 100%;
   height: 100%;
   border-left: 2px solid rgb(207, 207, 207);
@@ -361,7 +625,7 @@ body{
   padding-left: 5px;
 }
 
-.postThisComment{
+.postThisComment {
   height: 100%;
   display: flex;
   padding-top: 3px;
@@ -464,7 +728,6 @@ body.modal-open {
   border-bottom: 1px solid rgb(0, 0, 0);
 }
 
-
 .comment-heading img {
   width: 40px;
   height: 40px;
@@ -472,14 +735,13 @@ body.modal-open {
   margin-right: 10px;
 }
 
-
-.more-options{
- position: fixed;
+.more-options {
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
   z-index: 999;
   display: flex;
   flex-direction: column;
@@ -520,7 +782,7 @@ body.modal-open {
   transform: scale(1.02);
 }
 
-.comment-body{
+.comment-body {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -535,7 +797,7 @@ body.modal-open {
   line-height: 1.5rem;
 }
 
-.comment-input{
+.comment-input {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -547,7 +809,7 @@ body.modal-open {
   width: 100%;
 }
 
-.comment-input input{
+.comment-input input {
   width: 85%;
   height: 30px;
   border: none;
@@ -581,7 +843,7 @@ body.modal-open {
   background-color: rgb(226, 226, 226);
 }
 
-.profile-photo-sidebar{
+.profile-photo-sidebar {
   height: 2rem;
   width: 2rem;
   position: relative;
@@ -589,7 +851,7 @@ body.modal-open {
   margin-right: -10px;
 }
 
-.profile-photo-sidebar img{
+.profile-photo-sidebar img {
   height: 100%;
   width: 100%;
   border-radius: 50%;
@@ -609,7 +871,7 @@ body.modal-open {
   align-items: center;
 }
 
-.post-modal{
+.post-modal {
   z-index: 1;
   width: 30vw;
   min-height: 25vh;
@@ -622,7 +884,7 @@ body.modal-open {
   gap: 10px;
 }
 
-.profile-photo-createPost{
+.profile-photo-createPost {
   display: flex;
   align-items: center;
   height: 50px;
@@ -631,7 +893,7 @@ body.modal-open {
   cursor: pointer;
 }
 
-.profile-photo-createPost img{
+.profile-photo-createPost img {
   background-position: center;
   background-size: cover;
   height: 40px;
@@ -640,54 +902,422 @@ body.modal-open {
   border-radius: 50%;
 }
 
-.add-caption{
+.add-caption {
   width: 100%;
 }
 
-.add-caption textarea{
+.add-caption textarea {
   width: calc(100% - 40px);
   outline: none;
 }
 
-.newPost-info{
+.newPost-info {
   top: 150px;
   display: flex;
   justify-content: center;
 }
 
-.newPost-info button{
+.newPost-info button {
   padding: 5px;
   height: 100%;
   width: max-content;
   background-color: black;
   color: azure;
-  border-radius:0.5rem;
+  border-radius: 0.5rem;
   cursor: pointer;
 }
 
-.newPost-info button:hover{
+.newPost-info button:hover {
   background-color: #303030;
   transform: scale(1.02);
   box-shadow: 5px 5px 5px #595959;
 }
 
-.newPostImage{
+.newPostImage {
   width: 100%;
   height: max-content;
 }
 
-.newPost-submit{
-  width :100%;
+.newPost-submit {
+  width: 100%;
   height: 35px;
-  background-Color: black;
+  background-color: black;
   color: white;
-  border-Radius: 10px;
-  font-Size: 18px;
+  border-radius: 10px;
+  font-size: 18px;
   cursor: pointer;
 }
 
-.newPost-submit:hover{
-   background-color: #303030;
+.newPost-submit:hover {
+  background-color: #303030;
   transform: scale(1.02);
   box-shadow: 5px 5px 5px #595959;
+}
+
+.delete-Post-Box {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  height: max-content;
+  width: 30vw;
+  padding: 50px;
+  background-color: rgb(252, 255, 237);
+  color: black;
+  border-radius: 2rem;
+}
+
+.delete-Post-Box p {
+  height: 50px;
+}
+
+.delete-Post-Box div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.delete-Post-Box div button {
+  height: 100%;
+  width: 40%;
+  background-color: black;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 5px;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+.delete-Post-Box div button:hover {
+  background-color: rgb(30, 36, 0);
+  box-shadow: 5px 5px 0px rgb(207, 207, 207);
+}
+
+.post-comment button:hover {
+  background-color: #e5e5e5;
+  border-radius: 0.5rem;
+}
+
+.each-comment {
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.comment-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.comment-avatar {
+  height: 32px;
+  width: 32px;
+  object-fit: cover;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.comment-content {
+  flex: 1;
+  min-width: 0; /* This is crucial for text wrapping */
+}
+
+.comment-username {
+  font-weight: 600;
+  font-size: 16px;
+  color: #262626;
+  margin-bottom: 4px;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #262626;
+  line-height: 1.4;
+  word-wrap: break-word;
+  word-break: break-word; /*all three (top,this and bottom one) do the same work but top one is supported for old browser , this one has some effect in some conditions and bottom is latest one*/
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.comment-time {
+  color: #8e8e8e;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+@media (max-width: 480px) {
+  .comment-avatar {
+    height: 28px;
+    width: 28px;
+  }
+
+  .comment-username {
+    font-size: 13px;
+  }
+
+  .comment-text {
+    font-size: 13px;
+  }
+
+  .comment-time {
+    font-size: 11px;
+  }
+}
+
+.rightSideBar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 25vw;
+  padding: 10px;
+}
+
+.rightSideBar-sec1 {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  align-items: center;
+  margin-top: 30px;
+  padding: 5px;
+}
+
+.rightSideBar-sec1:hover {
+  background-color: #f2f2f2;
+  border-radius: 0.5rem;
+}
+
+.rightSideBar-user-profile img {
+  height: 40px;
+  width: 40px;
+  object-fit: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.rightSideBar-user-username {
+  color: rgb(0, 0, 0);
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rightSideBar-user-bio {
+  color: gray;
+  font-size: 10px;
+}
+
+.suggestedUser {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  height: 85%;
+  overflow: auto;
+}
+
+.suggestedUser-heading {
+  display: flex;
+  gap: 20px;
+  font-size: 1.1rem;
+}
+
+.suggestedUser-heading h2 {
+  color: gray;
+  cursor: pointer;
+}
+
+.suggestedUser-heading h2:hover {
+  color: black;
+}
+
+/* Main Profile Container */
+.Profile {
+  margin-left: 16vw;
+  width: 82vw;
+  padding: 2rem;
+  font-family: "Arial", sans-serif;
+}
+
+/* Profile Header Container */
+.profile-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 4rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Profile Image Section */
+.Profile-image {
+  flex-shrink: 0;
+}
+
+.Profile-image img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e1e8ed;
+}
+
+/* Profile Info Section */
+.profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Username and Bio */
+.profile-header-top {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.profile-username-section h1 {
+  font-size: 1.75rem;
+  font-weight: 300;
+  margin: 0;
+  color: #262626;
+}
+
+.profile-username-section h2 {
+  font-size: 0.875rem;
+  color: #8e8e8e;
+  margin: 0.5rem 0 0 0;
+  font-weight: 400;
+}
+
+/* Buttons Section */
+.profile-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.profile-buttons button {
+  padding: 6px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fafafa;
+  color: #262626;
+}
+
+.profile-buttons button:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+}
+
+/* Edit Profile Buttons (Own Profile) */
+.profile-top-button {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.profile-top-button button {
+  background: #0095f6;
+  color: white;
+  border: none;
+}
+
+.profile-top-button button:hover {
+  background: #1877f2;
+}
+
+/* Follow/Unfollow Buttons */
+.following button:first-child {
+  background: #0095f6;
+  color: white;
+  margin-right: 20px;
+}
+
+.following button:last-child {
+  background: #e7e7e7;
+  border: 1px solid #dbdbdb;
+  color: #262626;
+  border: none;
+}
+
+.follow button {
+  background: #0095f6;
+  color: white;
+  border: none;
+  padding: 8px 24px;
+}
+
+/* Stats Section */
+.profile-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 0.5rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.stat-number {
+  font-weight: 600;
+  color: #262626;
+}
+
+.stat-label {
+  color: #262626;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .Profile {
+    margin-left: 0;
+    width: 100vw;
+    padding: 1rem;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .profile-header-top {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .Profile-image img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .profile-stats {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-stats {
+    gap: 1rem;
+  }
+
+  .profile-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .profile-buttons button {
+    width: 100%;
+    justify-content: center;
+  }
 }

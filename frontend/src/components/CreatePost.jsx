@@ -26,7 +26,7 @@ const CreatePost = ({ postOpen, setPostOpen }) => {
       const dataUrl = await readFileAsDataURL(file);
       setImagePreview(dataUrl);
     }
-  };
+  }; //this prevent the removal of photos on refresh
 
   const createPostHandler = async (e) => {
     e.preventDefault();
@@ -39,7 +39,7 @@ const CreatePost = ({ postOpen, setPostOpen }) => {
 
     const formData = new FormData();
     formData.append("caption", caption);
-    formData.append("image", file); // This should match multer field name in backend
+    if (imagePreview) formData.append("image", file); // This should match multer field name in backend (check in post.routes.js)
 
     try {
       setLoading(true);

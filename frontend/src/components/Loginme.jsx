@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAuthUser } from "../redux/authSlice";
 import store from "../redux/store";
+import { Link } from "react-router-dom";
 
 const Loginme = () => {
   const [input, setInput] = useState({
@@ -90,16 +91,19 @@ const Loginme = () => {
           </button>
 
           <span>
-            <a href="" style={{ color: "blue", textDecoration: "none" }}>
+            <Link to="" style={{ color: "blue", textDecoration: "none" }}>
               forgot Password ?
-            </a>
+            </Link>
           </span>
           <br />
           <span>
             Doesn't have an account?{" "}
-            <a href="/signup" style={{ color: "blue", textDecoration: "none" }}>
+            <Link
+              to="/signup"
+              style={{ color: "blue", textDecoration: "none" }}
+            >
               Signup
-            </a>
+            </Link>
           </span>
         </div>
       </form>

@@ -1,19 +1,72 @@
 import React, { forwardRef, useRef, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { BsWindow } from "react-icons/bs";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import Comment from "./comment";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { setPosts, setSelectedPost } from "../redux/postSlice";
+import Posts from "./Posts";
+import { Link } from "react-router-dom";
 
-const PostComment = forwardRef(({ open, onClose }, ref) => {
+const PostComment = forwardRef(({ postComment }, ref) => {
   const [close, setClose] = useState(false);
   const [comment, setComment] = useState("");
   // const { posts } = useSelector((state) => state.post);
+  const { selectedPost } = useSelector((store) => store.post);
+  const dispatch = useDispatch();
+  const { posts } = useSelector((store) => store.post);
 
   const handleContainerClick = (e) => {
     e.stopPropagation(); //Prevent the closing of main box when clicked inside the box (ex:- when you click inside more-option-inside it should not close the modal but when you click outside the modal it should close)
   };
 
-  const handlePostClick = () => {
-    console.log("Post clicked with comment:", comment);
+  const handleComment = async () => {
+    if (!comment.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/post/posts/${selectedPost._id}/comments`,
+        { text: comment },
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setComment("");
+
+        const newComment = res.data.data;
+        //update redux store
+
+        //this is for updating the post comment only but it doesn't increase the no. of post in home screen(view all x post) so we need updatedPost
+        const updatedSelectedPost = {
+          ...selectedPost,
+          comments: [newComment, ...selectedPost.comments],
+        };
+
+        const updatedPosts = posts.map((post) =>
+          post._id === selectedPost._id
+            ? { ...post, comments: [newComment, ...post.comments] }
+            : post
+        );
+
+        // Update both the selected post and posts array
+        dispatch(setSelectedPost(updatedSelectedPost));
+        dispatch(setPosts(updatedPosts));
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleComment();
+    }
   };
 
   return (
@@ -23,37 +76,68 @@ const PostComment = forwardRef(({ open, onClose }, ref) => {
       onClick={handleContainerClick}
       style={{ zIndex: 10001 }}
     >
-      <div className="comment-modal-image">
+      <div
+        className="comment-modal-image"
+        style={{
+          position: "relative", // Set position to relative for the container
+          width: "50%", // Ensure it takes full width
+          height: "100%", // Ensure it takes full height
+          overflow: "hidden", // Prevent overflow
+        }}
+      >
+        {/* Blurry Background Image */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: `url(${selectedPost.image.url})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(5px)",
+            backgroundRepeat: "no-repeat",
+            zIndex: 0, // Ensure it's behind the image
+          }}
+        />
+
+        {/* Main Image (sharp) */}
         <img
-          src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+          src={selectedPost?.image?.url}
           alt="Post"
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            zIndex: 1, // Ensure it's above the blurred background
+          }}
         />
       </div>
 
       <div className="comment-modal-content">
         <div className="comment-heading">
-          <a href="" className="comment-profile">
+          <Link to="" className="comment-profile">
             <img
-              src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
+              src={selectedPost?.author?.profilePicture?.url}
               alt="Profile"
             />
-            <span
-              classNLinkame="comment-username"
-              style={{ fontSize: "1.25rem" }}
-            >
-              Username
+            <span className="comment-username" style={{ fontSize: "1.25rem" }}>
+              {selectedPost?.author?.username}
             </span>
-          </a>
+          </Link>
           <div className="close-icon" onClick={() => setClose(!close)}>
             <BsThreeDots />
           </div>
         </div>
-        <div className="comment-body">
-          <p>
-            lisis enim leo nec est. Lorem ipsum dolor sit amet, consectetur
-            adipiscing elit. Sed ullamcorper, nisi a facilisis tincidunt, enim
-            erat commodo quam, at facilisis enim leo nec est.
-          </p>
+        <div
+          className="comment-body"
+          style={{ padding: "10px", height: "82%" }}
+        >
+          {selectedPost?.comments?.map((comment) => (
+            <Comment key={comment._id} comment={comment} />
+          ))}
         </div>
         <div className="comment-input">
           <input
@@ -62,10 +146,11 @@ const PostComment = forwardRef(({ open, onClose }, ref) => {
             onChange={(e) => setComment(e.target.value)}
             placeholder={`Add a comment...  "⊞+." to add emoji`}
             className="comment-input-field"
+            onKeyDown={handleKeyDown}
           />
           <button
             disabled={!comment.trim()}
-            onClick={handlePostClick}
+            onClick={handleComment}
             className={!comment?.trim() ? "disabled-button" : "active-button"}
           >
             Post
