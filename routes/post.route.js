@@ -19,7 +19,7 @@ router.route('/posts/:postId/like').post(verifyJWT, likeDislike); // Clear actio
 router.route('/posts/:postId/comments').post(verifyJWT, addComment); // Nested resources
 router.route('/posts/:postId/allcomments').get(verifyJWT,getCommentsAccordingToPost)
 router.route('/posts/:postId/deletecomments').post(verifyJWT,deleteComment)
-router.route('/posts/:postId/deletepost').post(verifyJWT,deletePost)
+router.route('/posts/:postId/deletepost').delete(verifyJWT,deletePost)
 router.route('/posts/:postId/bookmarkpost').post(verifyJWT,bookMarkPost)
 
 //here _id is id of specific post

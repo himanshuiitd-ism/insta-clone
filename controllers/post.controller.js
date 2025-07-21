@@ -177,16 +177,16 @@ try {
     const populatedComment = await Comment.findById(comment._id).populate(
       {
       path:'author',
-      Select:'username profilePicture'
+      select:'username profilePicture'
       }
     )
 
-    post.comments.push(populatedComment)
+    post.comments.push(comment._id)
     await post.save()
 
     return res
     .status(200)
-    .json(new ApiResponse(200,comment,"Comment added"))
+    .json(new ApiResponse(200,populatedComment,"Comment added"))
   } catch (error) {
       throw new ApiError(400,error.message)
   }
@@ -200,7 +200,7 @@ export const getCommentsAccordingToPost=asyncHandler(async(req,res)=>{ //isme bh
     const commentsOnThatPost = await Comment.find({post:postId}).sort({createdAt:-1})
     .populate({
       path:'author',
-      Select:'username , profilePicture'
+      select:'username profilePicture'
     }) //ye sara comments user ko getUserPost and getPost me mil jaega hm bs sara ek post pr wala comments ek jagah la ke rkh dea hai (it's like ki getUserPost and getPost ko commet se populate(connect) kr do and comment ko sara same postid wale comment se populate kr do)
 
     //iska mtlb hai un sare comment ko find kro jinka post me id postid ke equal hai aur wo equal hoga kyu ki ref dea hua hai
