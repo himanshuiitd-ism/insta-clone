@@ -142,9 +142,16 @@ export const getProfile = asyncHandler(async (req, res) => {
     if (!userId) {
       throw new ApiError(400, "User is not valid");
     }
-    const userProfile = await User.findById(userId).select(
-      "-password -refreshToken"
-    );
+    const userProfile = await User.findById(userId)
+      .select("-password -refreshToken")
+      .populate({
+        path: "posts",
+        createdAt: -1,
+      })
+      .populate({
+        path: "bookmarks",
+        createdAt: -1,
+      });
     if (!userProfile) {
       throw new ApiError(400, "User not found");
     }
@@ -255,7 +262,7 @@ export const getSuggestedUser = asyncHandler(async (req, res) => {
 export const followOrUnfollow = asyncHandler(async (req, res) => {
   try {
     const followKrneWala = req.user._id;
-    const jiskoFollowKrunga = req.params._id;
+    const jiskoFollowKrunga = req.params._id; //routes me jo id hai wo us user ki id hai meri nahi hai
 
     if (followKrneWala === jiskoFollowKrunga) {
       throw new ApiError(401, "You can't folllow urself");
