@@ -1,6 +1,6 @@
-import {combineReducers, configureStore} from "@reduxjs/toolkit";
-import authSlice from "./authSlice.js"
-import postSlice from "./postSlice.js"
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import authSlice from "./authSlice.js";
+import postSlice from "./postSlice.js";
 import {
   persistReducer,
   FLUSH,
@@ -9,32 +9,31 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   version: 1,
   storage,
-}
+};
 
 const rootReducer = combineReducers({
-  auth:authSlice,
-  post:postSlice,
-})
+  auth: authSlice,
+  post: postSlice,
+});
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const store = configureStore
-({
-   reducer: persistedReducer,
+const store = configureStore({
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
-})
+});
 
 //we do all this different than traditional store bcoz we want out profile image to remain saved even after refreshing ,which is not possible in normal store.
 

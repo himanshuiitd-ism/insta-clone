@@ -7,6 +7,8 @@ import Loginme from "./components/Loginme";
 import Profile from "./components/Profile";
 import { cleanupInvalidData } from "./utils/cleanup";
 import { useEffect } from "react";
+import EditProfile from "./components/EditProfile";
+import ChatPage from "./components/ChatPage";
 
 const browserRouter = createBrowserRouter([
   {
@@ -20,6 +22,14 @@ const browserRouter = createBrowserRouter([
       {
         path: "/:id/profile",
         element: <Profile />,
+      },
+      {
+        path: "/account/edit",
+        element: <EditProfile />,
+      },
+      {
+        path: "/chat",
+        element: <ChatPage />,
       },
     ],
   },

@@ -1145,15 +1145,19 @@ body.modal-open {
 /* Profile Header Container */
 .profile-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 4rem;
   max-width: 800px;
   margin: 0 auto;
+  height: max-content;
 }
 
 /* Profile Image Section */
 .Profile-image {
   flex-shrink: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .Profile-image img {
@@ -1320,4 +1324,880 @@ body.modal-open {
     width: 100%;
     justify-content: center;
   }
+}
+/* Base Profile Content Section */
+.Profile-content-section {
+  margin-top: 2rem;
+  max-width: 100%;
+  height: max-content;
+  min-height: 500px;
+  margin: 5rem auto;
+  display: flex;
+  position: relative;
+  gap: 2rem;
+  border-top: 1px solid #dbdbdb;
+  left: 1.5vw;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Navigation Buttons */
+.post-saved-reals-tags {
+  width: 100%;
+  display: flex;
+  gap: 4rem;
+  justify-content: center;
+  position: absolute;
+  top: 1.5rem;
+  margin-left: -50px;
+  font-size: 1.2rem;
+  font-weight: 525;
+}
+
+.post-saved-reals-tags button {
+  background: none;
+  border: none;
+  color: #737373;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.post-saved-reals-tags button:hover {
+  cursor: pointer;
+  transform: scale(1.02);
+}
+
+.post-saved-reals-tags .active {
+  font-weight: 600;
+  color: #262626;
+}
+
+/* Private Account Styling */
+.private-account-message {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lock-icon {
+  font-size: 15rem;
+  color: #373737;
+  margin-bottom: 1rem;
+}
+
+.private-account-message h3 {
+  font-size: 1.5rem;
+  color: #262626;
+  margin: 0;
+}
+
+/* Contents Grid - Responsive */
+.contents {
+  position: absolute;
+  top: 5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: calc(100% - 3vw);
+  padding: 0 1.5vw;
+}
+
+/* Individual Content Items */
+.content-middle {
+  aspect-ratio: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin-bottom: 2rem;
+}
+
+.content-middle:hover {
+  transform: scale(1.02);
+}
+
+/* Responsive Breakpoints */
+
+/* Large Desktop (1200px and up) */
+@media (min-width: 1200px) {
+  .Profile-content-section {
+    left: 0;
+    max-width: 1200px;
+  }
+
+  .contents {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    padding: 0;
+  }
+
+  .post-saved-reals-tags {
+    margin-left: 0;
+  }
+}
+
+/* Desktop (992px to 1199px) */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .Profile-content-section {
+    left: 0;
+    margin: 3rem auto;
+    gap: 1.5rem;
+  }
+
+  .contents {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    width: 95%;
+    padding: 0 2.5%;
+  }
+
+  .post-saved-reals-tags {
+    gap: 3rem;
+    margin-left: 0;
+  }
+}
+
+/* Tablet (768px to 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+  .Profile-content-section {
+    left: 0;
+    margin: 2rem auto;
+    gap: 1rem;
+  }
+
+  .contents {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    width: 95%;
+    padding: 0 2.5%;
+  }
+
+  .post-saved-reals-tags {
+    gap: 2.5rem;
+    font-size: 1.1rem;
+    margin-left: 0;
+  }
+
+  .lock-icon {
+    font-size: 12rem;
+  }
+
+  .private-account-message h3 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Small Tablet and Mobile (767px and below) */
+@media (max-width: 767px) {
+  .Profile-content-section {
+    left: 0;
+    margin: 1.5rem auto;
+    gap: 1rem;
+  }
+
+  .contents {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 90%;
+    padding: 0 5%;
+  }
+
+  .post-saved-reals-tags {
+    gap: 2rem;
+    font-size: 1rem;
+    margin-left: 0;
+  }
+
+  .lock-icon {
+    font-size: 10rem;
+  }
+
+  .private-account-message h3 {
+    font-size: 1.2rem;
+  }
+}
+
+/* Mobile (575px and below) */
+@media (max-width: 575px) {
+  .Profile-content-section {
+    left: 0;
+    margin: 1rem auto;
+    gap: 0.5rem;
+    min-height: 400px;
+  }
+
+  .content-middle {
+    margin-bottom: 4rem;
+  }
+
+  .contents {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    width: 90%;
+    padding: 0 5%;
+    top: 4rem;
+  }
+
+  .post-saved-reals-tags {
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    margin-left: 0;
+    flex-wrap: wrap;
+    padding: 0 1rem;
+  }
+
+  .post-saved-reals-tags button {
+    min-width: fit-content;
+    padding: 0.5rem 1rem;
+  }
+
+  .lock-icon {
+    font-size: 8rem;
+  }
+
+  .private-account-message {
+    height: 250px;
+  }
+
+  .private-account-message h3 {
+    font-size: 1.1rem;
+    text-align: center;
+    padding: 0 1rem;
+  }
+}
+
+/* Extra Small Mobile (400px and below) */
+@media (max-width: 400px) {
+  .contents {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+    width: 95%;
+    padding: 0 2.5%;
+  }
+
+  .post-saved-reals-tags {
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+
+  .post-saved-reals-tags button {
+    padding: 0.4rem 0.8rem;
+  }
+
+  .lock-icon {
+    font-size: 6rem;
+  }
+
+  .private-account-message h3 {
+    font-size: 1rem;
+  }
+}
+
+.profile-post-details {
+  gap: 1rem;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2; /* Higher than background */
+}
+
+.content-middle:hover .profile-post-details {
+  opacity: 1;
+  visibility: visible;
+}
+
+.profile-post-details-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 1);
+  z-index: 1; /* Below details but above image */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.content-middle:hover .profile-post-details-background {
+  opacity: 0.4;
+}
+
+.profile-post-details-icon {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 500;
+  gap: 0.5rem;
+  width: max-content;
+  z-index: 3; /* Highest in the stack */
+}
+
+.profile-post-details-icon.like {
+  font-weight: 600;
+}
+
+.profile-post-details-icon.comment {
+  font-weight: 300;
+}
+
+/* CSS Styles */
+.Edit-Profile {
+  position: relative;
+  top: 2rem;
+  left: 20vw;
+  width: 77vw;
+  height: max-content;
+  display: flex;
+  flex-direction: column;
+  /* Glass effect */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  padding: 1rem 2rem;
+  padding-bottom: 2rem;
+}
+
+.firstChild {
+  position: relative;
+  left: 0;
+  top: 0;
+  gap: 1rem;
+  width: 100%;
+}
+
+.Edit-Profile-image-section {
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 28%;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.Edit-Profile-Profile-info {
+  position: absolute;
+  border-radius: 8px;
+  left: calc(2rem + 28% + 1rem);
+  top: 0rem;
+  right: 2rem;
+  border: 1px solid #e1e8ed;
+  height: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.Edit-Profile-image-section-profile-image {
+  height: 200px;
+  width: 100%;
+  box-shadow: 0 5px 25px 0 rgba(31, 38, 135, 0.37);
+  margin-bottom: 2rem;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.Edit-Profile-image-section-profile-image img {
+  object-fit: cover;
+}
+
+.Edit-Profile-image-section-change-profile-image {
+  position: relative;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  background-color: #eeeeee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #8e8e8e;
+  padding: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 2rem;
+}
+
+.Edit-Profile-image-section-change-profile-image button {
+  height: 100%;
+  width: 100%;
+  border: 1px solid #8e8e8e;
+  background-color: white;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: 0.1s ease-out;
+}
+
+.Edit-Profile-image-section-change-profile-image button:hover {
+  transform: scale(1.02);
+}
+
+.Edit-Profile-image-section-change-profile-image button:active {
+  background-color: #e1e8ed;
+}
+
+.Edit-Profile-image-section-changePassword {
+  height: max-content;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.Edit-Profile-image-section-changePassword-input {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.Edit-Profile-image-section-changePassword-input p {
+  margin-left: 10px;
+}
+
+.Edit-Profile-image-section-changePassword-input input {
+  width: 100%;
+  height: 35px;
+  border: 1px solid #8e8e8e;
+  border-radius: 8px;
+  outline: none;
+  padding: 0 10px;
+}
+
+.Edit-Profile-image-section-changePassword-button {
+  width: 100%;
+  height: 35px;
+  border-radius: 8px;
+  border: 1px solid #8e8e8e;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.Edit-Profile-image-section-changePassword-button button {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.Edit-Profile-image-section-changePassword-button button:active {
+  transform: scale(1.02);
+  background-color: #e1e8ed;
+}
+
+.Edit-Profile-Profile-info-Level1 {
+  height: 50%;
+  width: 100%;
+  position: relative;
+}
+
+.Edit-Profile-Profile-info-Level2 {
+  width: 45%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.Edit-Profile-Profile-info-Level3 {
+  width: 45%;
+  height: 100%;
+  position: relative;
+  left: 55%;
+  top: 0;
+}
+
+.custom-select {
+  height: 35px;
+  width: 100%;
+  outline: none;
+  border: 1px solid #8e8e8e;
+  border-radius: 8px;
+  padding: 0 8px;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: white;
+}
+
+.Edit-Profile-Profile-info-Level4 {
+  height: 17%;
+  width: 100%;
+  position: relative;
+  display: flex;
+  gap: 10%;
+}
+
+.EditProfile-submit {
+  height: 40px;
+  width: 20%;
+  background-color: black;
+  color: white;
+  position: absolute;
+  right: 5.8rem;
+  bottom: 1rem;
+  border-radius: 8px;
+  transition: 0.2s ease-out;
+  cursor: pointer;
+}
+
+.EditProfile-submit:hover {
+  transform: scale(1.02);
+  background-color: rgb(26, 25, 25);
+}
+
+.EditProfile-submit:active {
+  background-color: rgb(255, 255, 255);
+  color: black;
+  border: 1px solid black;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Responsive Design */
+
+/* Large tablets and small desktops (1024px and below) */
+@media (max-width: 1024px) {
+  .Edit-Profile {
+    left: 15vw;
+    width: 82vw;
+    padding: 1rem 1.5rem;
+    padding-bottom: 2rem;
+  }
+
+  .Edit-Profile-image-section {
+    width: 35%;
+    padding: 1.5rem;
+  }
+
+  .Edit-Profile-Profile-info {
+    left: calc(1.5rem + 35% + 1rem);
+    right: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .Edit-Profile-image-section-profile-image {
+    height: 180px;
+  }
+
+  .EditProfile-submit {
+    right: 1.5rem;
+    width: 35%;
+  }
+}
+
+/* Tablets (768px and below) */
+@media (max-width: 768px) {
+  .Edit-Profile {
+    left: 10vw;
+    width: 85vw;
+    padding: 1rem;
+    padding-bottom: 2rem;
+  }
+
+  .Edit-Profile-image-section {
+    width: 100%;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+  }
+
+  .Edit-Profile-Profile-info {
+    position: relative;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .firstChild {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .Edit-Profile-image-section-profile-image {
+    height: 160px;
+    max-width: 300px;
+    margin: 0 auto 2rem;
+  }
+
+  .Edit-Profile-Profile-info-Level2,
+  .Edit-Profile-Profile-info-Level3 {
+    position: relative;
+    width: 100%;
+    left: 0;
+    margin-bottom: 2rem;
+  }
+
+  .Edit-Profile-Profile-info-Level1 {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .Edit-Profile-Profile-info-Level4 {
+    height: auto;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .EditProfile-submit {
+    position: relative;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    margin-top: 2rem;
+  }
+}
+
+/* Small tablets and large phones (600px and below) */
+@media (max-width: 600px) {
+  .Edit-Profile {
+    left: 5vw;
+    width: 90vw;
+    padding: 1rem 0.8rem;
+    padding-bottom: 2rem;
+  }
+
+  .Edit-Profile-image-section,
+  .Edit-Profile-Profile-info {
+    padding: 1rem;
+  }
+
+  .Edit-Profile-image-section-profile-image {
+    height: 140px;
+  }
+
+  .Edit-Profile h1 {
+    font-size: 20px !important;
+  }
+}
+
+/* Mobile phones (480px and below) */
+@media (max-width: 480px) {
+  .Edit-Profile {
+    left: 2vw;
+    width: 96vw;
+    padding: 0.8rem 0.5rem;
+    padding-bottom: 1.5rem;
+    top: 1rem;
+    margin-bottom: 4rem;
+  }
+
+  .Edit-Profile-image-section,
+  .Edit-Profile-Profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.8rem;
+  }
+
+  .Edit-Profile-image-section-profile-image {
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+  }
+
+  .Edit-Profile h1 {
+    font-size: 18px !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .Edit-Profile-image-section-changePassword {
+    margin-left: 20%;
+  }
+
+  .Edit-Profile-image-section-changePassword-input input,
+  .custom-select {
+    height: 40px;
+    width: 80%;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .Edit-Profile-image-section-change-profile-image {
+    width: 80%;
+  }
+  /* 
+  .Edit-Profile-image-section-change-profile-image button {
+    width: 80%;
+  } */
+
+  .Edit-Profile-image-section-change-profile-image {
+    height: 50px;
+    padding: 0.5rem;
+  }
+
+  .EditProfile-submit {
+    height: 45px;
+    font-size: 14px;
+  }
+
+  .Edit-Profile-image-section-changePassword-button {
+    width: 80%;
+    overflow: hidden;
+  }
+}
+
+/* Very small phones (360px and below) */
+@media (max-width: 360px) {
+  .Edit-Profile {
+    left: 1vw;
+    width: 98vw;
+    padding: 0.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .Edit-Profile-image-section,
+  .Edit-Profile-Profile-info {
+    padding: 0.5rem;
+  }
+
+  .Edit-Profile-image-section-profile-image {
+    height: 100px;
+  }
+
+  .Edit-Profile h1 {
+    font-size: 16px !important;
+  }
+
+  .Edit-Profile-image-section-changePassword-input p {
+    margin-left: 5px;
+    font-size: 14px;
+  }
+}
+
+/* ChatPage */
+.ChatPage {
+  width: 80vw;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  padding: 10px;
+}
+
+.ChatPageSec1 {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 20vw;
+  border-right: 1px solid #e1e8ed;
+  position: relative;
+  left: -20px;
+  top: 10px;
+  bottom: 0;
+}
+
+.ChatPageSec1 div h1 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.ChatPageSec1 div img {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.chatPageUser:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.ChatPageSec2 {
+  height: 100%;
+  flex-grow: 1;
+  position: relative;
+}
+
+.ChatPageSec2-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.ChatPageSec2-heading {
+  height: 60px;
+  width: 100%;
+  position: relative;
+  left: 0;
+  top: 2.5px;
+  display: flex;
+  align-items: center;
+  box-sizing: content-box;
+  border-bottom: 2px solid #8e8e8e;
+  padding-bottom: 2.8px;
+  border-radius: 8px;
+  border-left: 1px solid #e1e8ed;
+  border-right: 1px solid #e1e8ed;
+  padding-left: 10px;
+}
+
+.ChatPageSec2-icons {
+  position: absolute;
+  right: 0;
+  display: flex;
+  gap: 15px;
+  font-size: 25px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.ChatPageSec2-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  align-content: center;
+  justify-items: center;
+}
+
+.ChatPageSec2-icons :hover {
+  cursor: pointer;
+  background-color: #dbdbdb;
+}
+
+.ChatPageSec2-heading img {
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.ChatPageSec2-heading p {
+  position: absolute;
+  left: 60px;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.ChatPageSec2-input {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  outline: none;
+  height: 50px;
+  padding: 10px;
+  border-left: 1px solid #e5e5e5;
+  font-size: 18px;
+  border-radius: 8px;
+  background: linear-gradient(to right, rgb(235, 235, 235) 0%, white 100%);
 }
