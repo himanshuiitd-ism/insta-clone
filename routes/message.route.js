@@ -5,7 +5,8 @@ import { getMessage, sendMessage } from "../controllers/message.controller.js";
 const router = express.Router();
 
 // Basic routes (without rate limiting)
-router.route("/sender/:receiverId").post(verifyJWT, sendMessage);
+// message.routes.js
+router.route("/send/:receiverId").post(verifyJWT, sendMessage);
 router.route("/all/:senderId").get(verifyJWT, getMessage);
 
 export default router;

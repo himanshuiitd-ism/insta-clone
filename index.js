@@ -6,10 +6,9 @@ import dotenv from "dotenv";
 import userRoute from "./routes/user.route.js";
 import postRoute from "./routes/post.route.js";
 import messageRoute from "./routes/message.route.js";
+import { app, server } from "./socket/socket.js";
 
 dotenv.config({});
-
-const app = express();
 
 const PORT = process.env.PORT || 3000;
 
@@ -42,7 +41,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   connectDB();
   console.log(`Server listining at port: ${PORT}`);
 });
