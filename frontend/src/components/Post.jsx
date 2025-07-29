@@ -14,12 +14,13 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { setPosts, setSelectedPost } from "../redux/postSlice";
 import { Link } from "react-router-dom";
+import { setAuthUser, setUserProfile } from "../redux/authSlice";
 
 const Post = ({ post }) => {
   const [postComment, setPostComment] = useState("");
   const [open, setOpen] = useState(false);
   const commentRef = useRef(null);
-  const { user } = useSelector((state) => state.auth);
+  const { user, userProfile } = useSelector((state) => state.auth);
   const [deletePost, setDeletePost] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const { posts } = useSelector((store) => store.post);
@@ -27,8 +28,10 @@ const Post = ({ post }) => {
   const [liked, setLiked] = useState(post?.likes?.includes(user?._id) || false);
 
   useEffect(() => {
-    setLiked(post?.likes?.includes(user?._id) || false);
-  }, [post?.likes, user._id]);
+    // Update liked state when post.likes changes
+    const isCurrentlyLiked = post?.likes?.includes(user?._id) || false;
+    setLiked(isCurrentlyLiked);
+  }, [post?.likes, user?._id]);
 
   const handleCommentClick = (e) => {
     // e.stopPropagation();
@@ -84,30 +87,70 @@ const Post = ({ post }) => {
       return;
     }
 
+    const wasLiked = liked; // Store current state
+
     try {
+      // Optimistic update - update UI immediately
+      setLiked(!liked);
+
+      // Update Redux store optimistically
+      const optimisticPosts = posts.map((p) => {
+        if (p._id === post._id) {
+          return {
+            ...p,
+            likes: wasLiked
+              ? p.likes.filter((id) => id !== user._id)
+              : [...p.likes, user._id],
+          };
+        }
+        return p;
+      });
+      dispatch(setPosts(optimisticPosts));
+
+      // Make API call
       const res = await axios.post(
         `http://localhost:8000/api/v1/post/posts/${post._id}/like`,
         {},
         { withCredentials: true }
       );
+
       if (res.data.success) {
-        setLiked(!liked); // Toggle the liked state
+        // Show success toast
         toast.success(res.data.message);
-        const updatedPost = posts.map((p) => {
-          if (p._id === post._id) {
-            const isLiked = p.likes.includes(user._id);
-            return {
-              ...p,
-              likes: isLiked
-                ? p.likes.filter((id) => id !== user._id)
-                : [...p.likes, user._id],
-            };
-          }
-          return p;
-        });
-        dispatch(setPosts(updatedPost));
+
+        // Verify the backend response matches our optimistic update
+        const serverPost = res.data.data || res.data.post;
+        if (serverPost) {
+          const verifiedPosts = posts.map((p) => {
+            if (p._id === post._id) {
+              return {
+                ...p,
+                likes: serverPost.likes || p.likes,
+              };
+            }
+            return p;
+          });
+          dispatch(setPosts(verifiedPosts));
+        }
       }
     } catch (error) {
+      // Revert optimistic update on error
+      setLiked(wasLiked);
+
+      // Revert Redux store
+      const revertedPosts = posts.map((p) => {
+        if (p._id === post._id) {
+          return {
+            ...p,
+            likes: wasLiked
+              ? [...p.likes, user._id]
+              : p.likes.filter((id) => id !== user._id),
+          };
+        }
+        return p;
+      });
+      dispatch(setPosts(revertedPosts));
+
       console.log(error);
       if (error.response?.status === 401) {
         toast.error("Please login to perform this action");
@@ -163,6 +206,62 @@ const Post = ({ post }) => {
     }
   };
 
+  const followHandler = async (userId) => {
+    const isFollowed = user?.following?.includes(userId) || false;
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/user/followOrUnfollow/${userId}`,
+        {},
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        const updatedUser = {
+          ...user,
+          following: isFollowed
+            ? user.following.filter((id) => id !== userId)
+            : [...user.following, userId],
+        };
+        dispatch(setAuthUser(updatedUser));
+
+        const updatedUserProfile = {
+          ...userProfile,
+          followers: isFollowed
+            ? userProfile.followers.filter((id) => id !== user?._id)
+            : [...userProfile.followers, user._id],
+        };
+        dispatch(setUserProfile(updatedUserProfile));
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message);
+    }
+  };
+
+  const bookMark = async () => {
+    if (!user) {
+      toast.error("Please login to bookmark posts");
+      return;
+    }
+
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/post/posts/${post._id}/bookmarkpost`,
+        { withCredentials: true } // ✅ Correct: config as second parameter
+      );
+      if (res.data.success) {
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response?.status === 401) {
+        toast.error("Please login to perform this action");
+      } else {
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      }
+    }
+  };
+
   return (
     <div className="post" style={{ width: "400px", position: "relative" }}>
       {/* Post Header */}
@@ -202,7 +301,18 @@ const Post = ({ post }) => {
               : undefined
           }
         >
-          {user?.username === post?.author?.username ? "Delete" : "Follow"}
+          {user?.username === post?.author?.username ? (
+            "Delete"
+          ) : (
+            <button
+              onClick={() => followHandler(post?.author?._id)}
+              style={{ cursor: "pointer" }}
+            >
+              {user?.following?.includes(post?.author?._id)
+                ? "UnFollow"
+                : "Follow"}
+            </button>
+          )}
         </div>
       </div>
 
@@ -264,7 +374,7 @@ const Post = ({ post }) => {
               <FiSend />
             </span>
           </div>
-          <span className="bookmark">
+          <span className="bookmark" onClick={bookMark}>
             <FaRegBookmark />
           </span>
         </div>

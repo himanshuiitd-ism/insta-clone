@@ -1648,7 +1648,7 @@ body.modal-open {
 }
 
 .profile-post-details-icon.like {
-  font-weight: 600;
+  font-weight: 300;
 }
 
 .profile-post-details-icon.comment {
@@ -2570,4 +2570,34 @@ body.modal-open {
   color: rgb(0, 183, 255);
   background-color: white;
   transform: translateY(-1px);
+}
+
+.Notification-mainbox {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.Notification-mainbox h1 {
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.Notification-peruser {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.Notification-peruser:hover {
+  background-color: rgb(214, 243, 255);
+}
+
+.Notification-details {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  cursor: pointer;
 }

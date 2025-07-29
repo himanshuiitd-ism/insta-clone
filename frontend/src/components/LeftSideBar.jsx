@@ -16,13 +16,18 @@ import { setAuthUser } from "../redux/authSlice";
 import CreatePost from "./CreatePost";
 import { useState, useEffect } from "react";
 import Logout from "./Logout";
+import NotificationBox from "./Notification";
+import { clearAllNotifications, markAllAsSeen } from "../redux/rtnSlice";
 
 const LeftSideBar = () => {
   const { user, userProfile } = useSelector((state) => state.auth);
   const [postOpen, setPostOpen] = useState(false);
   const [logout, setLogOut] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { likenotification } = useSelector((state) => state.rtNotification);
+  const { likenotification, unseenCount } = useSelector(
+    (state) => state.rtNotification
+  );
+  const [notificationBox, setNotificationBox] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -104,8 +109,8 @@ const LeftSideBar = () => {
       navigate(`/chat`);
       console.log("Messages clicked");
     } else if (name === "Notifications") {
-      // Add notifications functionality
-      console.log("Notifications clicked");
+      setNotificationBox(true);
+      dispatch(markAllAsSeen());
     }
   };
 
@@ -134,11 +139,26 @@ const LeftSideBar = () => {
               }}
             >
               <span className="icon">{element.logo}</span>
-              <span className="elementName">{element.name}</span>
-              {/* {element.name === "Notifications" &&
-                likenotification?.length > 0 && (
-                  
-                )} */}
+              <span className="elementName">
+                {element.name}
+                {element.name === "Notifications" &&
+                  likenotification?.length > 0 && (
+                    <span
+                      className="badge text-bg-secondary"
+                      style={{
+                        marginLeft: "1vw",
+                        height: "100%",
+                        width: "max-content",
+                        backgroundColor: "red",
+                        padding: "0 6px",
+                        borderRadius: "50%",
+                        color: "white",
+                      }}
+                    >
+                      {unseenCount < 1000 ? unseenCount : "999+"}
+                    </span>
+                  )}
+              </span>
             </div>
           ))}
         </div>
@@ -172,6 +192,23 @@ const LeftSideBar = () => {
             logout={logout}
             setLogOut={setLogOut}
             logoutHandler={logoutHandler}
+          />
+        </div>
+      )}
+
+      {/* Notification */}
+      {notificationBox && (
+        <div
+          className="createPost"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setNotificationBox(false);
+            }
+          }}
+        >
+          <NotificationBox
+            notificationBox={notificationBox}
+            setNotificationBox={setNotificationBox}
           />
         </div>
       )}

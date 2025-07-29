@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const SignUp = () => {
   const [input, setInput] = useState({
@@ -12,6 +13,8 @@ const SignUp = () => {
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
@@ -46,6 +49,13 @@ const SignUp = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <div className="signup-box">
       <form onSubmit={signUpHandler}>
