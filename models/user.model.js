@@ -28,7 +28,7 @@ const userSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ["male", "female", "other"],
+      enum: ["male", "female", "other", ""], //"" iseleye rakkha bcoz jb hm profile edit krte hai to usme agr gender chor denge to "" string hi aaega
     },
     followers: [
       {

@@ -117,20 +117,18 @@ export const getUserPost = asyncHandler(async (req, res) => {
 
 export const likeDislike = asyncHandler(async (req, res) => {
   try {
-    const likeKrneWaleKiId = req.user._id; //mai jaise like krta hu kisi ka post to ye meri id ka baat kr rha hai (mai krunga na kisi post ko like/unlike)
-    const postId = req.params.postId; //params ke baad wahi name do jo router me ":" iske baad dea ho
+    const likeKrneWaleKiId = req.user._id;
+    const postId = req.params.postId;
+
     const post = await Post.findById(postId);
     if (!post) {
       throw new ApiError(400, "Post not found");
     }
-    const isLiked = post.likes.includes(likeKrneWaleKiId);
-    //   if (isLiked) {
-    //   await Post.updateOne({ _id: postId }, { $pull: { likes: likeKrneWaleKiId } });
-    // } else {
-    //   await Post.updateOne({ _id: postId }, { $push: { likes: likeKrneWaleKiId } });
-    // }
 
-    //better way
+    const isLiked = post.likes.includes(likeKrneWaleKiId);
+    const postOwnerId = post.author._id.toString();
+
+    // Update post likes
     const updatedPost = await Post.findByIdAndUpdate(
       postId,
       isLiked
@@ -139,63 +137,35 @@ export const likeDislike = asyncHandler(async (req, res) => {
       { new: true }
     );
 
-    const postOwnerId = post.author._id.toString();
-
+    // Only send notifications if user is not liking their own post
     if (postOwnerId !== likeKrneWaleKiId.toString()) {
+      const user = await User.findById(likeKrneWaleKiId).select(
+        "username profilePicture"
+      );
+
+      const postOwnerSocketId = receiverSocketId(postOwnerId);
+
       if (!isLiked) {
-        const user = await User.findById(likeKrneWaleKiId).select(
-          "username profilePicture"
-        );
-
-        //setting data in notificationSchema
-        const notificationData = {
-          type: "Like",
-          senderId: likeKrneWaleKiId,
-          recipientId: postOwnerId,
-          postId,
-          message: "Liked your post",
-          senderDetails: {
-            username: user.username,
-            profilePicture: user.profilePicture,
-          },
-        };
-
-        //save to database
-        const notification = new Notification(notificationData);
-        await notification.save();
-
-        //send real time notification
-        const postOwnerSocketId = receiverSocketId(postOwnerId);
-        if (postOwnerSocketId) {
-          //jb postOwner online aaega tb notification show kr dena
-          io.to(postOwnerSocketId).emit("notification", {
-            ...notificationData,
-            _id: notification._id, //<-From DataBase
-            createdAt: notification.createdAt, //<-From DataBase
-          });
-        }
-      } else {
-        //Unlike and remove notification
-        const deleteNotification = await Notification.findOneAndDelete({
-          //isse notification mil jaega jispe operation krna hai
+        // LIKING - Send notification
+        const notification = {
           type: "like",
-          senderId: likeKrneWaleKiId,
-          postId: postId,
-          recipientId: postOwnerId,
-        });
-
-        //send real time removal
-        if (deleteNotification) {
-          const postOwnerSocketId = receiverSocketId(postOwnerId);
-          if (postOwnerSocketId) {
-            io.to(postOwnerSocketId).emit("removeNotification", {
-              notificationId: deleteNotification._id,
-              type: "like",
-              senderId: likeKrneWaleKiId,
-              postId,
-            });
-          }
-        }
+          userId: likeKrneWaleKiId,
+          userDetails: user,
+          postId,
+          message: "Your post was liked",
+          createdAt: new Date(),
+        };
+        io.to(postOwnerSocketId).emit("notification", notification);
+      } else {
+        // UNLIKING - Send removal notification
+        const notification = {
+          type: "dislike", // or "unlike"
+          userId: likeKrneWaleKiId,
+          userDetails: user,
+          postId,
+          message: "Your post was unliked",
+        };
+        io.to(postOwnerSocketId).emit("notification", notification);
       }
     }
 
@@ -375,67 +345,5 @@ export const bookMarkPost = asyncHandler(async (req, res) => {
       );
   } catch (error) {
     throw new ApiError(error.statusCode, error.message || "bookmarke failed");
-  }
-});
-
-export const getNotifications = asyncHandler(async (req, res) => {
-  try {
-    const userId = req.user._id; //req.user mila hai verifyJWT se
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
-    const skip = (page - 1) * limit;
-
-    const notifications = await Notification.find({ recipientId: userId })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate("senderId", "username profilePicture")
-      .populate("postId", "image"); //userId bcoz ye getNotification hai yani user ke taraf se
-
-    const unreadCount = await Notification.countDocuments({
-      recipientId: userId,
-      read: false,
-    }); //user ka hr wo msg jiska read false ho
-
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        {
-          notifications,
-          unreadCount,
-          hasMore: notifications.length === limit,
-        },
-        "Notification fetched successfully"
-      )
-    );
-  } catch (error) {
-    throw new ApiError(400, error.message || "Failed to fetch Notification");
-  }
-});
-
-//Mark notification as read
-export const markAsRead = asyncHandler(async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const { notificationIds } = req.body; //Array of notification IDs
-
-    await Notification.updateMany(
-      {
-        _id: { $in: notificationIds }, // Matches documents where _id is in the `notificationIds` array ,$in checks if a field's value exists in a given array.
-        recipientId: userId,
-      },
-      {
-        read: true,
-      }
-    );
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, {}, "Notification marked as read"));
-  } catch (error) {
-    throw new ApiError(
-      400,
-      error.message || "Failed to mark notifications as read"
-    );
   }
 });
