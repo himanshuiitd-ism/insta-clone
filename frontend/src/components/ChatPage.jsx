@@ -5,14 +5,19 @@ import { useDispatch, useSelector } from "react-redux";
 import image from "./images/image.png";
 import { setSelectedUser } from "../redux/authSlice";
 import { IoMdCall } from "react-icons/io";
-import { BsThreeDots } from "react-icons/bs";
+import { BsSend, BsThreeDots } from "react-icons/bs";
+import { LuMessageCircleCode } from "react-icons/lu";
+import Messages from "./Messages";
+import { setMessages } from "../redux/chatSlice";
 
 const ChatPage = () => {
   const { user, selectedUser } = useSelector((store) => store.auth);
+  const { onlineUsers, messages } = useSelector((state) => state.chat);
   const [availableUsers, setAvailableUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [noFollowing, setNoFollowing] = useState(false);
   const dispatch = useDispatch();
+  const [textMsg, setTextMsg] = useState();
 
   //when page is refreshed selecteduser bcom null
   useEffect(() => {
@@ -27,6 +32,8 @@ const ChatPage = () => {
         setNoFollowing(true); //this is to display message
         return;
       }
+
+      setLoading(true);
 
       try {
         const userDetailsPromise = user.following.map((userId) =>
@@ -156,8 +163,46 @@ const ChatPage = () => {
     fetchFollowingUser();
   }, [user]);
 
-  const isOnline = false;
-  console.log("selectedUser is ", selectedUser);
+  const sendMsgHandler = async (receiverId) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/message/send/${receiverId}`,
+        { textMsg },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (res.data.success) {
+        const newMessage = {
+          ...res.data.data,
+          sender: {
+            _id: user._id,
+          },
+          receiver: {
+            _id: selectedUser._id,
+          },
+        };
+
+        // Add the new message to the existing messages array
+        dispatch(setMessages([...messages, newMessage]));
+        setTextMsg("");
+      }
+    } catch (error) {
+      console.log(error.message || "message not send master ");
+      toast.error(error.response?.data?.message);
+    }
+  };
+
+  const handleKeyDown = (e, receiverId) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMsgHandler(receiverId);
+    }
+  };
 
   return (
     <div className="ChatPage" style={{ marginLeft: "19vw" }}>
@@ -176,52 +221,55 @@ const ChatPage = () => {
           <h1>{user?.username}</h1>
         </div>
 
-        {availableUsers.map((followedUser) => {
-          return (
-            <div
-              onClick={() => dispatch(setSelectedUser(followedUser))}
-              className="chatPageUser"
-              key={followedUser._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "20px",
-                padding: "5px ",
-                paddingLeft: "10px",
-                borderRadius: "4px",
-              }}
-            >
-              <img
-                src={followedUser.profilePicture?.url || image}
-                alt="profilePhoto"
-              />
-              <div className="userNameBox-ChatPage">
-                <p>{followedUser.username}</p>
-                {isOnline ? (
-                  <p
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "600",
-                      color: "rgb(129, 214, 0)",
-                    }}
-                  >
-                    Online
-                  </p>
-                ) : (
-                  <p
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "600",
-                      color: "red",
-                    }}
-                  >
-                    Offline
-                  </p>
-                )}
-              </div>
-            </div>
-          );
-        })}
+        {loading
+          ? "Please wait"
+          : availableUsers.map((followedUser) => {
+              const isOnline = onlineUsers.includes(followedUser._id);
+              return (
+                <div
+                  onClick={() => dispatch(setSelectedUser(followedUser))}
+                  className="chatPageUser"
+                  key={followedUser._id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "20px",
+                    padding: "5px ",
+                    paddingLeft: "10px",
+                    borderRadius: "4px",
+                  }}
+                >
+                  <img
+                    src={followedUser.profilePicture?.url || image}
+                    alt="profilePhoto"
+                  />
+                  <div className="userNameBox-ChatPage">
+                    <p>{followedUser.username}</p>
+                    {isOnline ? (
+                      <p
+                        style={{
+                          fontSize: "10px",
+                          fontWeight: "600",
+                          color: "rgb(129, 214, 0)",
+                        }}
+                      >
+                        Online
+                      </p>
+                    ) : (
+                      <p
+                        style={{
+                          fontSize: "10px",
+                          fontWeight: "600",
+                          color: "red",
+                        }}
+                      >
+                        Offline
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
       </div>
       <div className="ChatPageSec2">
         {selectedUser ? (
@@ -238,15 +286,30 @@ const ChatPage = () => {
                 </div>
               </div>
             </div>
-            <div className="ChatPageSec2-middle">I am the king</div>
+            <div className="ChatPageSec2-middle">
+              <Messages />
+            </div>
             <input
               type="text"
+              value={textMsg} //value mtlb ki jo text msg me hai wo yaha input me dikhna chahie ,to jo likhte hai wo pehle textMsg me jaega phir yaha input me dikhega
+              onChange={(e) => setTextMsg(e.target.value)}
               placeholder="They are waiting for your presence..."
               className="ChatPageSec2-input"
+              onKeyDown={(e) => handleKeyDown(e, selectedUser._id)}
             />
+            <button
+              className="ChatPageSec2-input-send"
+              onClick={() => sendMsgHandler(selectedUser._id)}
+            >
+              <BsSend />
+            </button>
           </div>
         ) : (
-          <h1>I am not</h1>
+          <div className="ChatPageSec2-container-fornoMsg">
+            <LuMessageCircleCode fontSize="200px" />
+            <p style={{ fontSize: "30px", fontWeight: "600" }}>Your Message</p>
+            <p>Send a message to start a chat</p>
+          </div>
         )}
       </div>
     </div>

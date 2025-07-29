@@ -1,13 +1,18 @@
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
 import image from "./images/image.png";
 import useGetSuggestedUser from "../hooks/useGetSuggestedUser";
+import axios from "axios";
+import { setAuthUser, setUserProfile } from "../redux/authSlice";
+import toast from "react-hot-toast";
 
 const SuggestedUser = () => {
+  const { user, userProfile } = useSelector((store) => store.auth);
+  const { suggestedUser } = useSelector((store) => store.auth);
+  const dispatch = useDispatch();
+
   // Call the hook to fetch suggested users
   useGetSuggestedUser();
-
-  const { suggestedUser } = useSelector((store) => store.auth);
 
   // Handle loading and empty states
   if (!suggestedUser) {
@@ -18,24 +23,36 @@ const SuggestedUser = () => {
     return <div>No suggested users available</div>;
   }
 
-  const buttonStyle = {
-    fontSize: "12px",
-    color: "rgb(0, 183, 255)",
-    fontWeight: "600",
-    cursor: "pointer",
-    background: "none",
-    border: "1px solid rgb(0, 183, 255)",
-    borderRadius: "6px",
-    padding: "3px 6px",
-    transition: "all 0.2s ease-in-out",
-  };
+  const followHandler = async (userId) => {
+    const isFollowed = user?.following?.includes(userId) || false;
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/user/followOrUnfollow/${userId}`,
+        {},
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        const updatedUser = {
+          ...user,
+          following: isFollowed
+            ? user.following.filter((id) => id !== userId)
+            : [...user.following, userId],
+        };
+        dispatch(setAuthUser(updatedUser));
 
-  const buttonHoverStyle = {
-    ...buttonStyle,
-    backgroundColor: "rgb(0, 183, 255)",
-    color: "white",
-    transform: "translateY(-1px)",
-    // boxShadow: "0 2px 8px rgba(0, 183, 255, 0.3)",
+        const updatedUserProfile = {
+          ...userProfile,
+          followers: isFollowed
+            ? userProfile.followers.filter((id) => id !== user?._id)
+            : [...userProfile.followers, user._id],
+        };
+        dispatch(setUserProfile(updatedUserProfile));
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message);
+    }
   };
 
   return (
@@ -44,30 +61,27 @@ const SuggestedUser = () => {
         <h1>Suggested for you</h1>
         <h2>See All</h2>
       </div>
-      {suggestedUser.map((user) => {
+      {suggestedUser.map((Suser) => {
+        const isFollowing = user?.following?.includes(Suser._id);
+
         return (
-          <div key={user._id} className="rightSideBar-sec1">
+          <div key={Suser._id} className="rightSideBar-sec1">
             <div className="rightSideBar-user-profile">
-              <Link to={`/${user._id}/profile`}>
-                <img src={user?.profilePicture?.url || image} alt="Profile" />
+              <Link to={`/${Suser._id}/profile`}>
+                <img src={Suser?.profilePicture?.url || image} alt="Profile" />
               </Link>
             </div>
             <div className="rightSideBar-user-detail">
               <div className="rightSideBar-user-username">
-                <Link to={`/${user._id}/profile`}>{user?.username}</Link>
+                <Link to={`/${Suser._id}/profile`}>{Suser?.username}</Link>
               </div>
-              <div className="rightSideBar-user-bio">{user?.bio}</div>
+              <div className="rightSideBar-user-bio">{Suser?.bio}</div>
             </div>
             <button
-              style={buttonStyle}
-              onMouseEnter={(e) => {
-                Object.assign(e.target.style, buttonHoverStyle);
-              }}
-              onMouseLeave={(e) => {
-                Object.assign(e.target.style, buttonStyle);
-              }}
+              className={`follow-button ${isFollowing ? "follow" : "unfollow"}`} //classname me ""follow" : "unfollow"" ulta likha hua hai bcoz maine pehle hi css likh dea tha but ab mai thora design ulta krna chahta tha
+              onClick={() => followHandler(Suser._id)}
             >
-              Follow
+              {isFollowing ? "UnFollow" : "Follow"}
             </button>
           </div>
         );

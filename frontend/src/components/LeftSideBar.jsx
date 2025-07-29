@@ -22,6 +22,7 @@ const LeftSideBar = () => {
   const [postOpen, setPostOpen] = useState(false);
   const [logout, setLogOut] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { likenotification } = useSelector((state) => state.rtNotification);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -100,7 +101,7 @@ const LeftSideBar = () => {
       // Add explore functionality
       console.log("Explore clicked");
     } else if (name === "Messages") {
-      // Add messages functionality
+      navigate(`/chat`);
       console.log("Messages clicked");
     } else if (name === "Notifications") {
       // Add notifications functionality
@@ -134,7 +135,10 @@ const LeftSideBar = () => {
             >
               <span className="icon">{element.logo}</span>
               <span className="elementName">{element.name}</span>
-              <span className="tooltip-hover">{element.tooltip}</span>
+              {/* {element.name === "Notifications" &&
+                likenotification?.length > 0 && (
+                  
+                )} */}
             </div>
           ))}
         </div>
