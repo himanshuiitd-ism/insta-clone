@@ -118,13 +118,10 @@ const LeftSideBar = () => {
       navigate("/");
     } else if (name === "Search") {
       // Add search functionality
-      console.log("Search clicked");
     } else if (name === "Explore") {
       // Add explore functionality
-      console.log("Explore clicked");
     } else if (name === "Messages") {
       navigate(`/chat`);
-      console.log("Messages clicked");
     } else if (name === "Notifications") {
       setNotificationBox(true);
     }

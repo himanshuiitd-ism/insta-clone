@@ -13,10 +13,9 @@ const useGetAllPost = () => {
         });
         if (res.data.success) {
           dispatch(setPosts(res.data.data));
-          console.log(res.data.data);
         }
       } catch (error) {
-        console.log("The error is :", error);
+        console.error("The error is :", error);
       }
     };
     fetchAllPost();

@@ -61,8 +61,6 @@ const ChatPage = () => {
           // Fixed: Extract user data from result.value.data.data
           .map((result) => result.value.data.data);
 
-        console.log("followingUserData", followingUserData);
-
         const chatableUser = followingUserData.filter((userData) => {
           // Safety checks
           if (!userData || !userData._id) return false;
@@ -87,7 +85,6 @@ const ChatPage = () => {
                 `http://localhost:8000/api/v1/message/all/${userData._id}`,
                 { withCredentials: true }
               ); //isme bahut kuch aaega usme se messages array nikalna hai
-              console.log("messageResponse.data", messageResponse.data);
               const messages =
                 messageResponse?.data?.data?.messages ||
                 messageResponse?.data?.messages || //baad me wala messages convo.schema wala messages array hai
@@ -98,22 +95,13 @@ const ChatPage = () => {
 
               const lastMessageTime = lastMessage?.createdAt || null;
 
-              console.log(
-                `Messages for ${userData.username}:`,
-                messages.length
-              );
-              console.log(
-                `Last message time for ${userData.username}:`,
-                lastMessageTime
-              );
-
               return {
                 ...userData,
                 lastMessageTime: lastMessageTime,
                 messageCount: 0,
               };
             } catch (error) {
-              console.log(
+              console.error(
                 `No chat history found for user ${userData.username}:`,
                 error.response?.data?.message || error.message
               );
@@ -150,10 +138,9 @@ const ChatPage = () => {
           return new Date(b.updatedAt) - new Date(a.updatedAt);
         });
 
-        console.log("Sorted users with chat data:", sortedUsers);
         setAvailableUsers(sortedUsers);
       } catch (error) {
-        console.log("Error in fetching following users: ", error);
+        console.error("Error in fetching following users: ", error);
         toast.error(error.response?.data?.message || "Failed to fetch users");
       } finally {
         setLoading(false);
@@ -192,7 +179,7 @@ const ChatPage = () => {
         setTextMsg("");
       }
     } catch (error) {
-      console.log(error.message || "message not send master ");
+      console.error(error.message || "message not send master ");
       toast.error(error.response?.data?.message);
     }
   };

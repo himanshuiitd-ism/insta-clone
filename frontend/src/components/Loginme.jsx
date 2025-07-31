@@ -46,7 +46,7 @@ const Loginme = () => {
         });
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error(
         error.response ? error.response.data.message : "An error occurred"
       );

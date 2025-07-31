@@ -12,8 +12,6 @@ const rtnSlice = createSlice({
       state.allNotification = action.payload;
     },
     setNotification: (state, action) => {
-      console.log("Redux setNotification called with:", action.payload);
-
       const { type, userId, postId } = action.payload;
 
       if (type === "like") {
@@ -32,7 +30,6 @@ const rtnSlice = createSlice({
     },
 
     setUnreadCount: (state, action) => {
-      console.log("Setting unread count from server:", action.payload);
       state.unreadCount = action.payload;
     },
 

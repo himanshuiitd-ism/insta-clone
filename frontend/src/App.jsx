@@ -83,7 +83,6 @@ function App() {
   }, []);
 
   useGetUnreadCount();
-  console.log("All Notifications:", allNotification);
 
   useEffect(() => {
     if (user) {
@@ -95,37 +94,22 @@ function App() {
       dispatch(setSocket(socketio));
 
       // Add connection event listeners
-      socketio.on("connect", () => {
-        console.log("✅ Socket connected successfully:", socketio.id);
-      });
-
-      socketio.on("disconnect", (reason) => {
-        console.log("❌ Socket disconnected:", reason);
-      });
-
-      socketio.on("connect_error", (error) => {
-        console.error("🚫 Socket connection error:", error);
-      });
 
       // Listen for online users
       socketio.on("getOnlineUsers", (onlineUsers) => {
-        console.log("👥 Online users received:", onlineUsers);
         dispatch(setOnlineUsers(onlineUsers));
       });
 
       // Listen for notifications
       socketio.on("notification", (notification) => {
-        console.log("🔔 Real-time notification received:", notification);
         dispatch(setNotification(notification));
       });
 
       return () => {
-        console.log("🧹 Cleaning up socket connection");
         socketio.close();
         dispatch(setSocket(null));
       };
     } else if (socket) {
-      console.log("🧹 User logged out, closing socket");
       socket?.close();
       dispatch(setSocket(null));
     }

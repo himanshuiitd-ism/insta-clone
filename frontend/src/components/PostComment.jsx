@@ -57,7 +57,7 @@ const PostComment = forwardRef(({ postComment }, ref) => {
         dispatch(setPosts(updatedPosts));
       }
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };

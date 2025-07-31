@@ -16,10 +16,9 @@ const useGetSuggestedUser = () => {
         );
         if (res.data.success) {
           dispatch(setSuggestedUser(res.data.data.users));
-          console.log(res.data.data.users);
         }
       } catch (error) {
-        console.log("The error is :", error);
+        console.error("The error is :", error);
       }
     };
     fetchSuggestedUser();

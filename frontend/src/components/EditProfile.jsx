@@ -38,7 +38,6 @@ const EditProfile = () => {
 
   const editProfileHandler = async (e) => {
     e.preventDefault();
-    console.log(input, selectedFile);
     if (loading || requestBlocked) {
       toast.error("Please wait before making another request");
       return;

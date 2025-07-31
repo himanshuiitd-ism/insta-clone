@@ -16,12 +16,11 @@ const useGetAllMessage = () => {
         );
 
         if (res.data.success) {
-          console.log(res.data);
           const messages = res.data.messages || res.data.data.messages || [];
           dispatch(setMessages(messages));
         }
       } catch (error) {
-        console.log(error || "Something is wrong in useGetAllMessage");
+        console.error(error || "Something is wrong in useGetAllMessage");
         // Set empty messages on error
         dispatch(setMessages([]));
       }

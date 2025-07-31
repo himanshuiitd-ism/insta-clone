@@ -68,7 +68,7 @@ const Post = ({ post }) => {
       }
     } catch (error) {
       setDeleting(false);
-      console.log(error);
+      console.error(error);
       if (error.response?.status === 401) {
         toast.error("Please login to perform this action");
       } else {
@@ -151,7 +151,7 @@ const Post = ({ post }) => {
       });
       dispatch(setPosts(revertedPosts));
 
-      console.log(error);
+      console.error(error);
       if (error.response?.status === 401) {
         toast.error("Please login to perform this action");
       } else {
@@ -194,7 +194,7 @@ const Post = ({ post }) => {
         dispatch(setPosts(updatedPost));
       }
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
@@ -233,7 +233,7 @@ const Post = ({ post }) => {
         toast.success(res.data.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error(error?.response?.data?.message);
     }
   };
@@ -253,7 +253,7 @@ const Post = ({ post }) => {
         toast.success(res.data.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       if (error.response?.status === 401) {
         toast.error("Please login to perform this action");
       } else {

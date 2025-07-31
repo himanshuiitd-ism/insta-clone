@@ -20,7 +20,7 @@ const useGetUnreadCount = () => {
             dispatch(setAllNotification(res.data.data.notifications));
           }
         } catch (error) {
-          console.log("Error fetching unread count:", error);
+          console.error("Error fetching unread count:", error);
         }
       }
     };
