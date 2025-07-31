@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^2.8.2",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.10.0",
+    "backend": "file:..",
     "bootstrap": "^5.3.7",
     "emoji-picker-react": "^4.13.2",
     "howler": "^2.2.4",

@@ -133,7 +133,7 @@ const LeftSideBar = () => {
         {/* Logo - Hidden on mobile */}
         <div className="logo">
           <img src={logoImage} alt="Logo" />
-          <span>Instagram</span>
+          <span>Instacook</span>
         </div>
         {/* Navigation Items */}
         <div className="leftSideBarLv1">

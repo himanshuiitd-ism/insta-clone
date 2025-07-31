@@ -136,12 +136,7 @@ const NotificationBox = ({ setNotificationBox, onClose }) => {
       onClick={onclickHandle}
     >
       <center>
-        <b>
-          Notifications{" "}
-          <p style={{ color: "red", fontSize: "8px" }}>
-            Once you click outside all notification will be gone
-          </p>
-        </b>
+        <b style={{ fontSize: "25px" }}>Notifications </b>
       </center>
       <div
         style={{ height: "100%", overflowY: "auto" }}

@@ -14,8 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSocket } from "./redux/socketSlice";
 import { setOnlineUsers } from "./redux/chatSlice";
 import { setNotification } from "./redux/rtnSlice";
-import ProtectedApp from "./components/ProtectedApp";
 import useGetUnreadCount from "./hooks/useNotification";
+import ProtectedApp from "./components/ProtectedApp";
 
 const browserRouter = createBrowserRouter([
   {
