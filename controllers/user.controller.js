@@ -157,7 +157,7 @@ export const getProfile = asyncHandler(async (req, res) => {
     }
     return res.status(200).json(new ApiResponse(200, userProfile, ""));
   } catch (error) {
-    console.log("Someting is wrong in line 132 to 142 :", error);
+    console.error("Someting is wrong in line 132 to 142 :", error);
   }
 });
 
@@ -251,7 +251,7 @@ export const getSuggestedUser = asyncHandler(async (req, res) => {
         )
       );
   } catch (error) {
-    console.log("error in suggestion part: ", error);
+    console.error("error in suggestion part: ", error);
     // Make sure to send a response in case of error
     return res
       .status(500)
@@ -359,7 +359,7 @@ export const deleteUserAccount = asyncHandler(async (req, res) => {
       cloudinary.uploader
         .destroy(user.profilePicture.publicId)
         .catch((error) =>
-          console.log("Failed to delete profilePicture ", error)
+          console.error("Failed to delete profilePicture ", error)
         );
     }
 

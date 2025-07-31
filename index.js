@@ -45,5 +45,4 @@ app.use((err, req, res, next) => {
 
 server.listen(PORT, () => {
   connectDB();
-  console.log(`Server listining at port: ${PORT}`);
 });

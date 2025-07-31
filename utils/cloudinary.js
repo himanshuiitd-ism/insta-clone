@@ -26,7 +26,6 @@ try {
     secure: true, // Force HTTPS
     cdn_subdomain: true, // Better CDN performance
   });
-  console.log("✅ Cloudinary configured successfully");
 } catch (error) {
   console.error("❌ Cloudinary config error:", error.message);
   throw new Error("Failed to initialize Cloudinary");

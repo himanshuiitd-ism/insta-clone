@@ -22,14 +22,10 @@ io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
   if (userId) {
     userSocketMap[userId] = socket.id;
-    console.log(`User connected = UserId:${userId} , SocketId:${socket.id}`);
   }
   io.emit("getOnlineUsers", Object.keys(userSocketMap)); //ye ek event banaega 'getOnlineUsers' naam ka jisko call krne pe userSocketMap se sara userId mil jaega
   socket.on("disconnect", () => {
     if (userId) {
-      console.log(
-        `User disconnected : UserId = ${userId},SocketId : ${socket.id}`
-      );
       delete userSocketMap[userId];
     }
     io.emit("getOnlineUsers", Object.keys(userSocketMap));

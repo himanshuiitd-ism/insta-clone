@@ -16,11 +16,8 @@ const connectDB = async () => {
         family: 4, // Force IPv4
       }
     );
-    console.log(
-      `\n ✅ MongoDB connected !! DB Host: ${connectionInstance.connection.host}`
-    );
   } catch (error) {
-    console.log("❌ MongoDB connection failed:", error);
+    console.error("❌ MongoDB connection failed:", error);
     process.exit(1);
   }
 };

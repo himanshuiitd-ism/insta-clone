@@ -112,9 +112,7 @@ export const getUserPost = asyncHandler(async (req, res) => {
       });
     //findbyId me Post ka id lagta but hame user ke id se dhundhna hai jo ki author section in post ka id hoga
     return res.status(200).json(new ApiResponse(200, posts, ""));
-  } catch (error) {
-    console.log("Error in getUserPost : ", error.message);
-  }
+  } catch (error) {}
 });
 
 export const likeDislike = asyncHandler(async (req, res) => {
@@ -127,9 +125,6 @@ export const likeDislike = asyncHandler(async (req, res) => {
     const likeKrneWaleKiId = req.user._id;
     const postId = req.params.postId;
 
-    console.log("User ID:", likeKrneWaleKiId);
-    console.log("Post ID:", postId);
-
     // Validate postId
     if (!postId) {
       throw new ApiError(400, "Post ID is required");
@@ -141,14 +136,8 @@ export const likeDislike = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Post not found");
     }
 
-    console.log("Post found:", post._id);
-    console.log("Post author:", post.author);
-
     const isLiked = post.likes.includes(likeKrneWaleKiId);
     const postOwnerId = post.author._id.toString();
-
-    console.log("Is liked:", isLiked);
-    console.log("Post owner ID:", postOwnerId);
 
     // Update post likes
     const updatedPost = await Post.findByIdAndUpdate(
@@ -171,7 +160,6 @@ export const likeDislike = asyncHandler(async (req, res) => {
         );
 
         if (!user) {
-          console.log("User not found for notification");
           // Continue without notification rather than failing
         } else {
           const postOwnerSocketId = receiverSocketId(postOwnerId);
@@ -222,7 +210,6 @@ export const likeDislike = asyncHandler(async (req, res) => {
           }
         }
       } catch (notificationError) {
-        console.log("Notification error:", notificationError);
         // Continue with the response even if notification fails
       }
     }
