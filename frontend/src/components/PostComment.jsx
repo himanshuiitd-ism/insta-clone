@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { BsWindow } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import Comment from "./comment";
+import Comment from "./Comment";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { setPosts, setSelectedPost } from "../redux/postSlice";
