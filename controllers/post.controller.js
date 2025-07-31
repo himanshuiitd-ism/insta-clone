@@ -8,6 +8,8 @@ import { Comment } from "../models/comment.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { receiverSocketId, io } from "../socket/socket.js";
+import { createNotification } from "./notification.controller.js";
+import { Notification } from "../models/notification.model.js";
 
 export const post = asyncHandler(async (req, res) => {
   try {
@@ -117,16 +119,36 @@ export const getUserPost = asyncHandler(async (req, res) => {
 
 export const likeDislike = asyncHandler(async (req, res) => {
   try {
+    // Check if user is authenticated
+    if (!req.user || !req.user._id) {
+      throw new ApiError(401, "User not authenticated");
+    }
+
     const likeKrneWaleKiId = req.user._id;
     const postId = req.params.postId;
 
-    const post = await Post.findById(postId);
-    if (!post) {
-      throw new ApiError(400, "Post not found");
+    console.log("User ID:", likeKrneWaleKiId);
+    console.log("Post ID:", postId);
+
+    // Validate postId
+    if (!postId) {
+      throw new ApiError(400, "Post ID is required");
     }
+
+    // Find post with author populated
+    const post = await Post.findById(postId).populate("author");
+    if (!post) {
+      throw new ApiError(404, "Post not found");
+    }
+
+    console.log("Post found:", post._id);
+    console.log("Post author:", post.author);
 
     const isLiked = post.likes.includes(likeKrneWaleKiId);
     const postOwnerId = post.author._id.toString();
+
+    console.log("Is liked:", isLiked);
+    console.log("Post owner ID:", postOwnerId);
 
     // Update post likes
     const updatedPost = await Post.findByIdAndUpdate(
@@ -137,44 +159,89 @@ export const likeDislike = asyncHandler(async (req, res) => {
       { new: true }
     );
 
+    if (!updatedPost) {
+      throw new ApiError(500, "Failed to update post");
+    }
+
     // Only send notifications if user is not liking their own post
     if (postOwnerId !== likeKrneWaleKiId.toString()) {
-      const user = await User.findById(likeKrneWaleKiId).select(
-        "username profilePicture"
-      );
+      try {
+        const user = await User.findById(likeKrneWaleKiId).select(
+          "username profilePicture"
+        );
 
-      const postOwnerSocketId = receiverSocketId(postOwnerId);
+        if (!user) {
+          console.log("User not found for notification");
+          // Continue without notification rather than failing
+        } else {
+          const postOwnerSocketId = receiverSocketId(postOwnerId);
 
-      if (!isLiked) {
-        // LIKING - Send notification
-        const notification = {
-          type: "like",
-          userId: likeKrneWaleKiId,
-          userDetails: user,
-          postId,
-          message: "Your post was liked",
-          createdAt: new Date(),
-        };
-        io.to(postOwnerSocketId).emit("notification", notification);
-      } else {
-        // UNLIKING - Send removal notification
-        const notification = {
-          type: "dislike", // or "unlike"
-          userId: likeKrneWaleKiId,
-          userDetails: user,
-          postId,
-          message: "Your post was unliked",
-        };
-        io.to(postOwnerSocketId).emit("notification", notification);
+          if (!isLiked) {
+            // Create database notification for like
+            const dbNotification = await createNotification({
+              recipient: postOwnerId,
+              sender: likeKrneWaleKiId,
+              type: "like",
+              post: postId,
+              message: `${user.username} liked your post`,
+            });
+
+            // Send real-time notification if user is online
+            if (postOwnerSocketId && dbNotification) {
+              const socketNotification = {
+                type: "like",
+                userId: likeKrneWaleKiId,
+                userDetails: user,
+                postId,
+                message: `${user.username} liked your post`,
+                createdAt: new Date(),
+                _id: dbNotification._id,
+              };
+              io.to(postOwnerSocketId).emit("notification", socketNotification);
+            }
+          } else {
+            // Delete notification for unlike
+            await Notification.findOneAndDelete({
+              type: "like",
+              sender: likeKrneWaleKiId,
+              post: postId,
+              recipient: postOwnerId,
+            });
+
+            // Send real-time unlike notification
+            if (postOwnerSocketId) {
+              const socketNotification = {
+                type: "dislike",
+                userId: likeKrneWaleKiId,
+                userDetails: user,
+                postId,
+                message: `${user.username} unliked your post`,
+              };
+              io.to(postOwnerSocketId).emit("notification", socketNotification);
+            }
+          }
+        }
+      } catch (notificationError) {
+        console.log("Notification error:", notificationError);
+        // Continue with the response even if notification fails
       }
     }
 
     return res
       .status(200)
-      .json(new ApiResponse(200, updatedPost, isLiked ? "Unliked" : "Liked"));
+      .json(
+        new ApiResponse(
+          200,
+          updatedPost,
+          isLiked ? "Post unliked successfully" : "Post liked successfully"
+        )
+      );
   } catch (error) {
-    console.log(error);
-    throw new ApiError(400, error.message || "like unlike failed");
+    console.error("Like/Dislike error:", error);
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Failed to like/unlike post"
+    );
   }
 });
 

@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import userRoute from "./routes/user.route.js";
 import postRoute from "./routes/post.route.js";
 import messageRoute from "./routes/message.route.js";
+import notificationRoutes from "./routes/notification.route.js";
 import { app, server } from "./socket/socket.js";
 
 dotenv.config({});
@@ -34,6 +35,7 @@ app.use(
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/post", postRoute);
 app.use("/api/v1/message", messageRoute);
+app.use("/api/v1/notifications", notificationRoutes);
 app.use((err, req, res, next) => {
   res.status(err.statusCode || 500).json({
     success: false,

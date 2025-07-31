@@ -1,24 +1,24 @@
-import mongoose , {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 //ye pura chat section ka msg save krne ke lea hai
 
-const conversationSchema=new Schema(
+const conversationSchema = new Schema(
   {
-    participants:[
+    participants: [
       {
-        type:Schema.Types.ObjectId,
-        ref:'User'
-      }
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
     ],
-    messages:[
+    messages: [
       {
-        type:Schema.Types.ObjectId,
-        ref:'Message'
-      }
-    ]
+        type: Schema.Types.ObjectId,
+        ref: "Message",
+      },
+    ],
   },
   {
-    timestamps:true
+    timestamps: true,
   }
-)
+);
 
-export const Conversation=mongoose.model('Conversation',conversationSchema)
+export const Conversation = mongoose.model("Conversation", conversationSchema);

@@ -3,28 +3,54 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
-export const verifyJWT=asyncHandler(async(req,_,next)=>{
-
+export const verifyJWT = asyncHandler(async (req, res, next) => {
   try {
-    const token=req.cookies?.accessToken || req.header('Authorization').replace("Bearer","")
+    // Better token extraction with proper error handling
+    let token = req.cookies?.accessToken;
 
-    if(!token){
-      throw new ApiError(401,"Unauthorised User!")
+    // If no cookie token, check Authorization header
+    if (!token) {
+      const authHeader = req.header("Authorization");
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        token = authHeader.replace("Bearer ", "").trim();
+      }
     }
 
-    const decodedToken=jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
-
-    const user=await User.findById(decodedToken?._id).select("-password -refreshToken")
-
-    if(!user){
-      throw new ApiError(401,"Invalid accessToken")
+    if (!token) {
+      throw new ApiError(401, "Access token is required");
     }
 
-    req.user=user
-    next()
+    // Verify token
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
+    if (!decodedToken || !decodedToken._id) {
+      throw new ApiError(401, "Invalid token structure");
+    }
+
+    // Find user
+    const user = await User.findById(decodedToken._id).select(
+      "-password -refreshToken"
+    );
+
+    if (!user) {
+      throw new ApiError(401, "User not found - Invalid access token");
+    }
+
+    // Set user in request
+    req.user = user;
+    next();
   } catch (error) {
-    throw new ApiError(401,error?.message||"Invalid AccessToken")
-  }
-})
+    console.error("Auth middleware error:", error);
 
+    // Handle JWT specific errors
+    if (error.name === "JsonWebTokenError") {
+      throw new ApiError(401, "Invalid access token");
+    } else if (error.name === "TokenExpiredError") {
+      throw new ApiError(401, "Access token expired");
+    } else if (error instanceof ApiError) {
+      throw error;
+    } else {
+      throw new ApiError(401, "Authentication failed");
+    }
+  }
+});
