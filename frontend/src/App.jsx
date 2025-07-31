@@ -15,6 +15,7 @@ import { setSocket } from "./redux/socketSlice";
 import { setOnlineUsers } from "./redux/chatSlice";
 import { setNotification } from "./redux/rtnSlice";
 import ProtectedApp from "./components/ProtectedApp";
+import useGetUnreadCount from "./hooks/useNotification";
 
 const browserRouter = createBrowserRouter([
   {
@@ -73,6 +74,7 @@ function App() {
   const { user } = useSelector((store) => store.auth);
   const { socket /*yaha initial state ka name likhna hota hai */ } =
     useSelector((store) => store.socketio);
+  const { allNotification } = useSelector((store) => store.rtNotification);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -80,29 +82,50 @@ function App() {
     cleanupInvalidData();
   }, []);
 
+  useGetUnreadCount();
+  console.log("All Notifications:", allNotification);
+
   useEffect(() => {
     if (user) {
       const socketio = io("http://localhost:8000", {
         query: { userId: user._id },
-        transports: ["websocket"], //to prevent multiple API call
+        transports: ["websocket"],
       });
+
       dispatch(setSocket(socketio));
 
-      //Listen all events
+      // Add connection event listeners
+      socketio.on("connect", () => {
+        console.log("✅ Socket connected successfully:", socketio.id);
+      });
+
+      socketio.on("disconnect", (reason) => {
+        console.log("❌ Socket disconnected:", reason);
+      });
+
+      socketio.on("connect_error", (error) => {
+        console.error("🚫 Socket connection error:", error);
+      });
+
+      // Listen for online users
       socketio.on("getOnlineUsers", (onlineUsers) => {
-        //yha se saara oline users mil jaega usko setonlineusers me pass kr do
+        console.log("👥 Online users received:", onlineUsers);
         dispatch(setOnlineUsers(onlineUsers));
       });
 
+      // Listen for notifications
       socketio.on("notification", (notification) => {
-        dispatch(setNotification(notification)); //store ke paas notification aa jaega agr socket me notification hoga and yaha app rerender hoga
+        console.log("🔔 Real-time notification received:", notification);
+        dispatch(setNotification(notification));
       });
 
       return () => {
+        console.log("🧹 Cleaning up socket connection");
         socketio.close();
         dispatch(setSocket(null));
       };
     } else if (socket) {
+      console.log("🧹 User logged out, closing socket");
       socket?.close();
       dispatch(setSocket(null));
     }

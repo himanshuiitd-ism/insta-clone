@@ -17,14 +17,14 @@ import CreatePost from "./CreatePost";
 import { useState, useEffect } from "react";
 import Logout from "./Logout";
 import NotificationBox from "./Notification";
-import { clearAllNotifications, markAllAsSeen } from "../redux/rtnSlice";
+import { clearAllNotifications } from "../redux/rtnSlice";
 
 const LeftSideBar = () => {
   const { user, userProfile } = useSelector((state) => state.auth);
   const [postOpen, setPostOpen] = useState(false);
   const [logout, setLogOut] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { likenotification, unseenCount } = useSelector(
+  const { likenotification, unreadCount } = useSelector(
     (state) => state.rtNotification
   );
   const [notificationBox, setNotificationBox] = useState(false);
@@ -43,6 +43,23 @@ const LeftSideBar = () => {
 
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
+
+  const markAllUnreadAsRead = async () => {
+    try {
+      await axios.patch(
+        "http://localhost:8000/api/v1/notifications/mark-all-read",
+        {},
+        { withCredentials: true }
+      );
+
+      // Update local state - mark all notifications as read
+      setDbNotifications((prev) =>
+        prev.map((notif) => ({ ...notif, isRead: true }))
+      );
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  };
 
   const sidebarElements = [
     { name: "Home", logo: <FaHome />, tooltip: "Home" },
@@ -110,7 +127,6 @@ const LeftSideBar = () => {
       console.log("Messages clicked");
     } else if (name === "Notifications") {
       setNotificationBox(true);
-      dispatch(markAllAsSeen());
     }
   };
 
@@ -155,7 +171,7 @@ const LeftSideBar = () => {
                         color: "white",
                       }}
                     >
-                      {unseenCount < 1000 ? unseenCount : "999+"}
+                      {unreadCount < 1000 ? unreadCount : "999+"}
                     </span>
                   )}
               </span>
@@ -203,6 +219,8 @@ const LeftSideBar = () => {
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setNotificationBox(false);
+              markAllUnreadAsRead();
+              dispatch(clearAllNotifications());
             }
           }}
         >

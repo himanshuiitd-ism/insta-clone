@@ -8,7 +8,7 @@ import useGetRTM from "../hooks/useGetRTM";
 
 const Messages = () => {
   const { selectedUser, user } = useSelector((store) => store.auth);
-  const { messages } = useSelector((store) => store.chat);
+  const { messages, onlineUsers } = useSelector((store) => store.chat);
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollTop = useRef(0);
 
@@ -99,6 +99,8 @@ const Messages = () => {
     );
   }
 
+  const isOnline = onlineUsers.includes(selectedUser._id);
+
   return (
     <div className="Message">
       {/* Header Section */}
@@ -113,11 +115,23 @@ const Messages = () => {
               src={selectedUser?.profilePicture?.url || image}
               alt="Profile"
             />
-            <div className="online-status"></div>
+            {isOnline ? (
+              <div
+                className="online-status"
+                style={{ backgroundColor: "#10b981" }}
+              ></div>
+            ) : (
+              <div
+                className="online-status"
+                style={{ backgroundColor: "red" }}
+              ></div>
+            )}
           </div>
           <div className="user-details">
             <h1>{selectedUser?.username}</h1>
-            <span className="user-status">Active now</span>
+            <span className="user-status">
+              {isOnline ? "Active now" : "Not Active"}
+            </span>
           </div>
         </div>
         <div className="header-actions">

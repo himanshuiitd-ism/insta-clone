@@ -14,10 +14,13 @@ import {
 import storage from "redux-persist/lib/storage";
 import socketSlice from "./socketSlice.js";
 import chatSlice from "./chatSlice.js";
+
 const persistConfig = {
   key: "root",
   version: 1,
   storage,
+  // Exclude socketio and rtNotification from persistence
+  blacklist: ["socketio", "rtNotification"],
 };
 
 const rootReducer = combineReducers({
@@ -36,10 +39,10 @@ const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        // Ignore socket objects in state
+        ignoredPaths: ["socketio.socket", "rtNotification"],
       },
     }),
 });
-
-//we do all this different than traditional store bcoz we want out profile image to remain saved even after refreshing ,which is not possible in normal store.
 
 export default store;
