@@ -6,12 +6,16 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { markNotificationAsSeen } from "../redux/rtnSlice";
 
-const NotificationBox = ({ setNotificationBox, onClose }) => {
+const NotificationBox = ({
+  setNotificationBox,
+  onClose,
+  dbNotifications,
+  setDbNotifications,
+}) => {
   const { user } = useSelector((state) => state.auth);
   const { likenotification, allNotification } = useSelector(
     (state) => state.rtNotification
   );
-  const [dbNotifications, setDbNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
@@ -54,6 +58,7 @@ const NotificationBox = ({ setNotificationBox, onClose }) => {
 
   const handleCloseNotificationBox = () => {
     // Mark all unread notifications as read before closing
+    markAllUnreadAsRead();
     setNotificationBox(false);
   };
 

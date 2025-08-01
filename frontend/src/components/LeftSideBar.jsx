@@ -29,6 +29,8 @@ const LeftSideBar = () => {
   );
   const [notificationBox, setNotificationBox] = useState(false);
 
+  const [dbNotifications, setDbNotifications] = useState([]);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -51,7 +53,6 @@ const LeftSideBar = () => {
         {},
         { withCredentials: true }
       );
-
       // Update local state - mark all notifications as read
       setDbNotifications((prev) =>
         prev.map((notif) => ({ ...notif, isRead: true }))
@@ -224,6 +225,8 @@ const LeftSideBar = () => {
           <NotificationBox
             notificationBox={notificationBox}
             setNotificationBox={setNotificationBox}
+            setDbNotifications={setDbNotifications}
+            dbNotifications={dbNotifications}
           />
         </div>
       )}
