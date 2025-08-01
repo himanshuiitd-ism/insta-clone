@@ -2,10 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "backend/index.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "node /opt/render/project/backend/index.js",
+    "start-relative": "cd /opt/render/project && node backend/index.js",
     "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
     "dev": "nodemon backend/index.js"
   },
